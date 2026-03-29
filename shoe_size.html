@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PAYOTE — Modules 3 & 5 · Currency + Shoe Size</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --sand:   #f5ede0;
+      --cream:  #faf8f5;
+      --ink:    #16140f;
+      --muted:  #847a6e;
+      --accent: #c4a46b;
+      --fr-blue:#002395;
+      --fr-red: #ED2939;
+      --serif:  'Cormorant Garamond', Georgia, serif;
+      --sans:   'Outfit', system-ui, sans-serif;
+      --r: 1.6rem;
+      --sh: 0 8px 40px rgba(22,20,15,.10);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      background: var(--cream);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ── PAGE HEADER ─────────────────────────────── */
+    .page-head {
+      background: var(--ink); color: #fff;
+      padding: 2.5rem;
+      position: relative; overflow: hidden;
+    }
+    .page-head::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(to right, var(--fr-blue) 33%, rgba(255,255,255,.5) 33% 66%, var(--fr-red) 66%);
+    }
+    .page-head-inner {
+      max-width: 1100px; margin: auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap;
+    }
+    .ph-brand { font-family: var(--serif); font-size: 1.8rem; font-weight: 300; letter-spacing: .08em; }
+    .ph-label { font-size: .62rem; letter-spacing: .35em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: .2rem; }
+    .ph-title { font-family: var(--serif); font-size: clamp(1.5rem,3vw,2.2rem); font-weight: 300; }
+    .ph-desc  { font-size: .8rem; color: rgba(255,255,255,.55); margin-top: .4rem; max-width: 460px; line-height: 1.7; }
+
+    /* ── LAYOUT ──────────────────────────────────── */
+    .main { max-width: 1100px; margin: auto; padding: 3rem 2rem 6rem; display: flex; flex-direction: column; gap: 3rem; }
+
+    /* ── CARD ────────────────────────────────────── */
+    .mod-card {
+      background: #fff; border-radius: var(--r);
+      border: 1px solid rgba(22,20,15,.07);
+      box-shadow: var(--sh);
+      overflow: hidden;
+    }
+    .mod-card-head {
+      padding: 2rem 2rem 0;
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    }
+    .mod-num {
+      font-family: var(--serif); font-size: 4rem; font-weight: 300;
+      line-height: 1; color: rgba(22,20,15,.07);
+      margin-right: .4rem;
+    }
+    .mod-label { font-size: .6rem; letter-spacing: .35em; text-transform: uppercase; color: var(--muted); }
+    .mod-title { font-family: var(--serif); font-size: 1.6rem; font-weight: 400; margin-top: .2rem; }
+    .mod-desc  { font-size: .8rem; color: var(--muted); margin-top: .4rem; line-height: 1.75; max-width: 500px; }
+    .mod-body  { padding: 1.8rem 2rem 2rem; }
+
+    /* ── FR BAR ──────────────────────────────────── */
+    .fr-bar { display: flex; height: 3px; width: 40px; border-radius: 2px; overflow: hidden; margin-bottom: 1rem; }
+    .fr-bar span { flex: 1; }
+    .fr-bar .b { background: var(--fr-blue); }
+    .fr-bar .w { background: rgba(200,200,200,.8); }
+    .fr-bar .r { background: var(--fr-red); }
+
+    /* ════════════════════════════════════════════
+       MODULE 3 — CURRENCY CONVERTER
+    ════════════════════════════════════════════ */
+
+    /* Status badge */
+    .rate-status {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-size: .7rem; color: var(--muted);
+      border: 1px solid rgba(22,20,15,.1);
+      border-radius: 999px; padding: .3rem .8rem;
+    }
+    .rate-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #aaa; transition: background .4s;
+    }
+    .rate-dot.live  { background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,.2); }
+    .rate-dot.cache { background: var(--accent); }
+    .rate-dot.error { background: var(--fr-red); }
+
+    /* Auto-detect banner */
+    .detect-banner {
+      background: linear-gradient(135deg, rgba(0,35,149,.06), rgba(0,35,149,.03));
+      border: 1px solid rgba(0,35,149,.12);
+      border-radius: 1rem; padding: 1rem 1.2rem;
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 1.8rem; flex-wrap: wrap;
+    }
+    .detect-flag { font-size: 1.6rem; }
+    .detect-text { flex: 1; }
+    .detect-text strong { font-size: .9rem; font-weight: 500; }
+    .detect-text small   { display: block; font-size: .73rem; color: var(--muted); margin-top: .1rem; }
+    .detect-accept {
+      background: var(--fr-blue); color: #fff;
+      border: none; border-radius: 999px;
+      padding: .45rem 1.1rem; font-size: .75rem;
+      font-family: var(--sans); cursor: pointer;
+      transition: opacity .2s;
+    }
+    .detect-accept:hover { opacity: .85; }
+
+    /* Currency selector pills */
+    .currency-selector {
+      display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: 2rem;
+    }
+    .cur-btn {
+      border: 1.5px solid rgba(22,20,15,.15);
+      background: transparent; border-radius: 999px;
+      padding: .5rem 1.2rem; font-size: .82rem;
+      font-family: var(--sans); cursor: pointer;
+      display: flex; align-items: center; gap: .45rem;
+      transition: all .25s;
+      color: var(--ink);
+      position: relative; overflow: hidden;
+    }
+    .cur-btn::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--ink);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .3s cubic-bezier(.4,0,.2,1); z-index: 0;
+    }
+    .cur-btn:hover { border-color: var(--ink); color: #fff; }
+    .cur-btn:hover::before { transform: scaleX(1); }
+    .cur-btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .cur-btn.active::before { display: none; }
+    .cur-btn span { position: relative; z-index: 1; }
+    .cur-sym { font-family: var(--serif); font-size: 1rem; font-weight: 400; }
+
+    /* Product price demo grid */
+    .price-demo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .pd-card {
+      border: 1px solid rgba(22,20,15,.07);
+      border-radius: 1.2rem; overflow: hidden;
+      background: var(--cream);
+      transition: transform .3s, box-shadow .3s;
+    }
+    .pd-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(22,20,15,.1); }
+    .pd-card:hover .pd-img { transform: scale(1.05); }
+    .pd-img {
+      aspect-ratio: 3/2;
+      transition: transform .5s cubic-bezier(.16,1,.3,1);
+    }
+    .pd-img.a { background: linear-gradient(145deg,#e8ddd2,#d4c9bb); }
+    .pd-img.b { background: linear-gradient(145deg,#d0c9be,#bfb8ae); }
+    .pd-img.c { background: linear-gradient(145deg,#e4d8c6,#c8b898); }
+    .pd-body { padding: .9rem 1rem 1rem; }
+    .pd-name { font-family: var(--serif); font-size: 1rem; }
+    .pd-price {
+      font-size: 1.25rem; font-weight: 600; margin-top: .3rem;
+      transition: opacity .2s;
+      display: flex; align-items: baseline; gap: .3rem;
+    }
+    .pd-price.updating { opacity: 0; }
+    .pd-sym  { font-size: .8rem; font-weight: 400; color: var(--muted); }
+    .pd-orig { font-size: .7rem; color: var(--muted); margin-top: .1rem; }
+
+    /* Live rate table */
+    .rate-table-wrap {
+      border: 1px solid rgba(22,20,15,.07);
+      border-radius: 1.2rem; overflow: hidden;
+    }
+    .rate-table-head {
+      background: var(--sand);
+      padding: .75rem 1.2rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .rate-table-head span { font-size: .72rem; color: var(--muted); letter-spacing: .08em; }
+    .rt { width: 100%; border-collapse: collapse; font-size: .82rem; }
+    .rt th {
+      background: rgba(22,20,15,.03); padding: .65rem 1.2rem;
+      text-align: left; font-weight: 500; font-size: .72rem;
+      letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+      border-bottom: 1px solid rgba(22,20,15,.06);
+    }
+    .rt td { padding: .7rem 1.2rem; border-bottom: 1px solid rgba(22,20,15,.04); }
+    .rt tr:last-child td { border: none; }
+    .rt tr:hover td { background: rgba(22,20,15,.02); }
+    .rt .active-row td { background: rgba(0,35,149,.04); font-weight: 500; }
+    .rt .active-row td:first-child::after { content: ' ✓'; color: var(--fr-blue); font-size: .65rem; }
+    .rate-val { font-variant-numeric: tabular-nums; }
+    .rate-change { font-size: .7rem; }
+    .rate-change.up   { color: #22c55e; }
+    .rate-change.down { color: var(--fr-red); }
+
+    /* Auto-convert toggle */
+    .convert-options {
+      display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(22,20,15,.07);
+    }
+    .opt-label { font-size: .72rem; color: var(--muted); letter-spacing: .05em; text-transform: uppercase; margin-bottom: .5rem; }
+    .toggle-row { display: flex; align-items: center; gap: .75rem; }
+    .toggle {
+      width: 40px; height: 22px;
+      background: rgba(22,20,15,.15); border-radius: 999px;
+      border: none; cursor: pointer; position: relative;
+      transition: background .3s;
+    }
+    .toggle::after {
+      content: ''; position: absolute;
+      width: 16px; height: 16px;
+      background: #fff; border-radius: 50%;
+      top: 3px; left: 3px;
+      transition: transform .3s cubic-bezier(.4,0,.2,1);
+      box-shadow: 0 1px 4px rgba(0,0,0,.2);
+    }
+    .toggle.on { background: var(--fr-blue); }
+    .toggle.on::after { transform: translateX(18px); }
+    .toggle-text { font-size: .82rem; }
+
+    /* ════════════════════════════════════════════
+       MODULE 5 — SHOE SIZE CONVERTER
+    ════════════════════════════════════════════ */
+
+    /* Input system selector */
+    .system-tabs {
+      display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.8rem;
+    }
+    .sys-tab {
+      border: 1.5px solid rgba(22,20,15,.15);
+      background: transparent; border-radius: 999px;
+      padding: .45rem 1.1rem; font-size: .8rem;
+      font-family: var(--sans); cursor: pointer; color: var(--ink);
+      transition: all .25s;
+    }
+    .sys-tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+    /* Size input */
+    .size-input-row {
+      display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;
+      margin-bottom: 1.8rem;
+    }
+    .size-input-wrap {
+      position: relative; flex: 1; min-width: 160px;
+    }
+    .size-input-wrap label {
+      position: absolute; top: -1.1rem; left: 0;
+      font-size: .65rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted);
+    }
+    .size-input {
+      width: 100%; border: 1.5px solid rgba(22,20,15,.15);
+      border-radius: .8rem; padding: .85rem 1rem;
+      font-size: 1.1rem; font-family: var(--sans); color: var(--ink);
+      background: var(--cream);
+      transition: border-color .2s, box-shadow .2s;
+      appearance: none;
+    }
+    .size-input:focus { outline: none; border-color: var(--fr-blue); box-shadow: 0 0 0 3px rgba(0,35,149,.08); }
+
+    .size-convert-btn {
+      background: var(--ink); color: #fff; border: none;
+      border-radius: .8rem; padding: .85rem 1.8rem;
+      font-size: .85rem; font-family: var(--sans); cursor: pointer;
+      position: relative; overflow: hidden;
+      transition: box-shadow .3s, transform .2s;
+      white-space: nowrap;
+    }
+    .size-convert-btn::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--fr-blue);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .35s cubic-bezier(.4,0,.2,1);
+    }
+    .size-convert-btn:hover { box-shadow: 0 4px 20px rgba(0,35,149,.25); transform: scale(1.02); }
+    .size-convert-btn:hover::before { transform: scaleX(1); }
+    .size-convert-btn span { position: relative; z-index: 1; }
+
+    /* Result display */
+    .size-result {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+      margin-bottom: 2rem;
+      min-height: 6rem;
+    }
+    .sr-item {
+      background: var(--cream);
+      border: 1.5px solid rgba(22,20,15,.07);
+      border-radius: 1.1rem; padding: 1.1rem;
+      text-align: center;
+      transition: border-color .3s, background .3s, transform .3s;
+    }
+    .sr-item.highlight {
+      border-color: var(--fr-blue);
+      background: rgba(0,35,149,.05);
+      transform: scale(1.04);
+    }
+    .sr-item.active-sys {
+      border-color: var(--ink);
+      background: var(--ink); color: #fff;
+    }
+    .sr-label { font-size: .62rem; letter-spacing: .25em; text-transform: uppercase; color: var(--muted); margin-bottom: .4rem; }
+    .sr-item.active-sys .sr-label { color: rgba(255,255,255,.5); }
+    .sr-val   { font-family: var(--serif); font-size: 2rem; font-weight: 300; line-height: 1; }
+    .sr-sub   { font-size: .7rem; color: var(--muted); margin-top: .3rem; }
+    .sr-item.active-sys .sr-sub { color: rgba(255,255,255,.5); }
+
+    /* Fit advisor */
+    .fit-advisor {
+      background: linear-gradient(135deg, rgba(196,164,107,.1), rgba(196,164,107,.05));
+      border: 1px solid rgba(196,164,107,.25);
+      border-radius: 1.1rem; padding: 1.2rem 1.4rem;
+      margin-bottom: 2rem;
+      display: none;
+    }
+    .fit-advisor.visible { display: block; }
+    .fit-top { display: flex; align-items: center; gap: .75rem; margin-bottom: .5rem; }
+    .fit-icon { font-size: 1.2rem; }
+    .fit-title { font-weight: 500; font-size: .9rem; }
+    .fit-text  { font-size: .82rem; color: var(--muted); line-height: 1.75; }
+    .fit-tags  { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .8rem; }
+    .fit-tag {
+      border-radius: 999px; padding: .22rem .75rem;
+      font-size: .7rem; border: 1px solid;
+    }
+    .fit-tag.g { border-color: rgba(34,197,94,.3); color: #16a34a; background: rgba(34,197,94,.07); }
+    .fit-tag.y { border-color: rgba(234,179,8,.3);  color: #a16207; background: rgba(234,179,8,.07); }
+    .fit-tag.r { border-color: rgba(237,41,57,.3);  color: var(--fr-red); background: rgba(237,41,57,.07); }
+
+    /* Full reference table */
+    .size-table-wrap { border: 1px solid rgba(22,20,15,.07); border-radius: 1.2rem; overflow-x: auto; }
+    .size-ref-table { width: 100%; border-collapse: collapse; font-size: .78rem; min-width: 580px; }
+    .size-ref-table th {
+      background: var(--sand); padding: .65rem 1rem;
+      text-align: center; font-weight: 500; font-size: .68rem;
+      letter-spacing: .15em; text-transform: uppercase; color: var(--muted);
+      border-bottom: 1px solid rgba(22,20,15,.07);
+      white-space: nowrap;
+    }
+    .size-ref-table th.eu-col { color: var(--fr-blue); background: rgba(0,35,149,.06); }
+    .size-ref-table td { padding: .6rem 1rem; text-align: center; border-bottom: 1px solid rgba(22,20,15,.04); }
+    .size-ref-table tr:last-child td { border: none; }
+    .size-ref-table tr:hover td { background: rgba(22,20,15,.025); }
+    .size-ref-table tr.row-highlight td {
+      background: rgba(0,35,149,.06);
+      font-weight: 500;
+    }
+    .size-ref-table tr.row-highlight td:first-child { color: var(--fr-blue); }
+
+    /* Measurement guide */
+    .measure-guide {
+      background: var(--ink); color: #fff;
+      border-radius: 1.2rem; padding: 1.5rem 1.8rem;
+      margin-top: 1.5rem;
+    }
+    .mg-title { font-family: var(--serif); font-size: 1.2rem; margin-bottom: .8rem; }
+    .mg-steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+    .mg-step { }
+    .mg-num  { font-family: var(--serif); font-size: 1.8rem; font-weight: 300; color: rgba(255,255,255,.2); line-height: 1; }
+    .mg-text { font-size: .77rem; color: rgba(255,255,255,.65); margin-top: .3rem; line-height: 1.65; }
+
+    /* ── SHARED UTIL ─────────────────────────────── */
+    .spin {
+      display: inline-block; width: 14px; height: 14px;
+      border: 2px solid rgba(22,20,15,.15);
+      border-top-color: var(--fr-blue);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 640px) {
+      .price-demo   { grid-template-columns: 1fr; }
+      .size-result  { grid-template-columns: 1fr 1fr; }
+      .mg-steps     { grid-template-columns: 1fr; }
+    }
+  
+    /* ── SHARED PROJECT NAV ─────────────────── */
+    .project-nav {
+      background: var(--ink, #16140f);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      position: relative;
+    }
+    .project-nav::before {
+      content: '';
+      display: block; height: 2px;
+      background: linear-gradient(to right, #002395 33%, rgba(255,255,255,.4) 33% 66%, #ED2939 66%);
+    }
+    .pnav-inner {
+      max-width: 1360px; margin: auto;
+      display: flex; align-items: center; gap: 0;
+      padding: 0 2rem; overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .pnav-inner::-webkit-scrollbar { display: none; }
+    .pnav-brand {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.1rem; font-weight: 300; letter-spacing: .1em;
+      color: #fff; text-decoration: none;
+      padding: .75rem 1.2rem .75rem 0;
+      border-right: 1px solid rgba(255,255,255,.1);
+      margin-right: .5rem; white-space: nowrap; flex-shrink: 0;
+    }
+    .pnav-link {
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: .7rem; letter-spacing: .06em;
+      color: rgba(255,255,255,.45); text-decoration: none;
+      padding: .78rem .9rem; white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+      flex-shrink: 0;
+    }
+    .pnav-link:hover  { color: rgba(255,255,255,.85); }
+    .pnav-link.active { color: #fff; border-bottom-color: #c4a46b; }
+
+    </style>
+  <script src="i18n.js"></script>
+</head>
+<body>
+  <!-- SHARED PROJECT NAV -->
+    <nav class="project-nav">
+    <div class="pnav-inner">
+      <a href="index.html"                    class="pnav-brand">PAYOTE</a>
+      <a href="homepage.html"                 class="pnav-link">Store</a>
+      <a href="cart_language.html"            class="pnav-link">Cart &amp; Language</a>
+      <a href="currency_selector.html"        class="pnav-link">Currency</a>
+      <a href="shoe_size.html"                class="pnav-link active">Shoe sizes</a>
+      <a href="payment_shipping_returns.html" class="pnav-link">Payment &amp; Shipping</a>
+    </div>
+  </nav>
+
+
+<!-- PAGE HEADER -->
+<div class="page-head">
+  <div class="page-head-inner">
+    <div class="ph-brand">PAYOTE</div>
+    <div>
+      <div class="ph-label">Interactive modules · Homework presentation</div>
+      <div class="ph-title">Point 3 &amp; 5 — Currency + Shoe Size</div>
+      <div class="ph-desc">Live currency auto-detection &amp; conversion · Universal EU/US/UK/CM size converter with Finnish market support</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ══════════════════════════════════════════════
+       MODULE 3 — CURRENCY CONVERTER
+  ══════════════════════════════════════════════ -->
+  <div class="mod-card" id="mod3">
+    <div class="mod-card-head">
+      <div style="display:flex;align-items:flex-start;gap:.5rem;">
+        <div class="mod-num">3</div>
+        <div>
+          <div class="fr-bar"><span class="b"></span><span class="w"></span><span class="r"></span></div>
+          <div class="mod-label">Module</div>
+          <div class="mod-title">Currency — Auto-detect &amp; Convert</div>
+          <div class="mod-desc">Browser locale detection proposes your currency on arrival. Live exchange rates update all prices instantly. Fallback rates always ready if the API is unavailable.</div>
+        </div>
+      </div>
+      <div class="rate-status">
+        <div class="rate-dot" id="rateDot"></div>
+        <span id="rateStatusText">Fetching rates…</span>
+      </div>
+    </div>
+
+    <div class="mod-body">
+
+      <!-- Auto-detect banner -->
+      <div class="detect-banner" id="detectBanner">
+        <div class="detect-flag" id="detectFlag">🌍</div>
+        <div class="detect-text">
+          <strong id="detectMsg">Detecting your location…</strong>
+          <small id="detectSub">We'll suggest the right currency for you.</small>
+        </div>
+        <button class="detect-accept" id="detectAccept" style="display:none">Use this currency</button>
+      </div>
+
+      <!-- Currency pills -->
+      <div class="currency-selector" id="currencySelector">
+        <!-- generated by JS -->
+      </div>
+
+      <!-- Product prices live demo -->
+      <div class="price-demo">
+        <div class="pd-card">
+          <div class="pd-img a"></div>
+          <div class="pd-body">
+            <div class="pd-name">Paris Canvas</div>
+            <div class="pd-price" id="price0">
+              <span class="pd-sym" id="sym0"></span><span id="val0">–</span>
+            </div>
+            <div class="pd-orig" id="orig0"></div>
+          </div>
+        </div>
+        <div class="pd-card">
+          <div class="pd-img b"></div>
+          <div class="pd-body">
+            <div class="pd-name">Riviera Suede</div>
+            <div class="pd-price" id="price1">
+              <span class="pd-sym" id="sym1"></span><span id="val1">–</span>
+            </div>
+            <div class="pd-orig" id="orig1"></div>
+          </div>
+        </div>
+        <div class="pd-card">
+          <div class="pd-img c"></div>
+          <div class="pd-body">
+            <div class="pd-name">Côte Basque</div>
+            <div class="pd-price" id="price2">
+              <span class="pd-sym" id="sym2"></span><span id="val2">–</span>
+            </div>
+            <div class="pd-orig" id="orig2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live rate table -->
+      <div class="rate-table-wrap">
+        <div class="rate-table-head">
+          <span>Exchange rates · base EUR</span>
+          <span id="rateUpdated">–</span>
+        </div>
+        <table class="rt">
+          <thead>
+            <tr><th>Currency</th><th>Code</th><th>Rate (1 EUR =)</th><th>Change</th></tr>
+          </thead>
+          <tbody id="rateTableBody">
+            <tr><td colspan="4" style="padding:1.5rem;text-align:center;color:var(--muted)"><span class="spin"></span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Options row -->
+      <div class="convert-options">
+        <div>
+          <div class="opt-label">Auto-detect currency</div>
+          <div class="toggle-row">
+            <button class="toggle on" id="autoToggle" onclick="toggleAuto()"></button>
+            <span class="toggle-text" id="autoToggleText">On — using browser locale</span>
+          </div>
+        </div>
+        <div>
+          <div class="opt-label">Show original EUR price</div>
+          <div class="toggle-row">
+            <button class="toggle on" id="origToggle" onclick="toggleOrig()"></button>
+            <span class="toggle-text">Always show base price</span>
+          </div>
+        </div>
+        <div>
+          <div class="opt-label">Tax / duties notice</div>
+          <div class="toggle-row">
+            <button class="toggle" id="taxToggle" onclick="toggleTax()"></button>
+            <span class="toggle-text" id="taxToggleText">Off</span>
+          </div>
+        </div>
+      </div>
+      <div id="taxNotice" style="display:none;margin-top:1rem;padding:.85rem 1rem;background:rgba(237,41,57,.06);border:1px solid rgba(237,41,57,.15);border-radius:.8rem;font-size:.78rem;color:var(--muted);">
+        ⚠️ &nbsp;Prices shown are indicative. Import duties, taxes, and customs fees may apply depending on destination country. Final amount confirmed at checkout.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════
+       MODULE 5 — SHOE SIZE CONVERTER
+  ══════════════════════════════════════════════ -->
+  <div class="mod-card" id="mod5">
+    <div class="mod-card-head">
+      <div style="display:flex;align-items:flex-start;gap:.5rem;">
+        <div class="mod-num">5</div>
+        <div>
+          <div class="fr-bar"><span class="b"></span><span class="w"></span><span class="r"></span></div>
+          <div class="mod-label">Module</div>
+          <div class="mod-title">Shoe Size — Universal Converter</div>
+          <div class="mod-desc">Enter your size in any system. Instant conversion across EU, US Women, US Men, UK and foot length in CM. Designed for Finnish buyers and every international market.</div>
+        </div>
+      </div>
+    </div>
+    <div class="mod-body">
+
+      <!-- System tabs -->
+      <div class="system-tabs" id="sysTabs">
+        <!-- generated by JS -->
+      </div>
+
+      <!-- Input row -->
+      <div class="size-input-row">
+        <div class="size-input-wrap">
+          <label id="inputLabel">Enter your EU size</label>
+          <select class="size-input" id="sizeSelect">
+            <option value="">— select —</option>
+          </select>
+        </div>
+        <button class="size-convert-btn" onclick="convertSize()"><span>Convert →</span></button>
+      </div>
+
+      <!-- Results -->
+      <div class="size-result" id="sizeResult">
+        <div class="sr-item"><div class="sr-label">EU</div><div class="sr-val">—</div></div>
+        <div class="sr-item"><div class="sr-label">US</div><div class="sr-val">—</div></div>
+        <div class="sr-item"><div class="sr-label">UK</div><div class="sr-val">—</div></div>
+        <div class="sr-item"><div class="sr-label">CM</div><div class="sr-val">—</div></div>
+      </div>
+
+      <!-- Fit advisor -->
+      <div class="fit-advisor" id="fitAdvisor">
+        <div class="fit-top">
+          <div class="fit-icon">👟</div>
+          <div class="fit-title" id="fitTitle">Fit advice for this size</div>
+        </div>
+        <div class="fit-text" id="fitText"></div>
+        <div class="fit-tags" id="fitTags"></div>
+      </div>
+
+      <!-- Reference table -->
+      <div class="size-table-wrap">
+        <table class="size-ref-table" id="sizeRefTable">
+          <thead>
+            <tr>
+              <th class="eu-col">EU</th>
+              <th>US Women</th>
+              <th>US Men</th>
+              <th>UK</th>
+              <th>CM (foot)</th>
+              <th>Fit note</th>
+            </tr>
+          </thead>
+          <tbody id="sizeRefBody"><!-- JS --></tbody>
+        </table>
+      </div>
+
+      <!-- Measurement guide -->
+      <div class="measure-guide">
+        <div class="mg-title">How to measure your foot</div>
+        <div class="mg-steps">
+          <div class="mg-step">
+            <div class="mg-num">1</div>
+            <div class="mg-text">Place a sheet of paper on a hard floor and stand on it with your full weight.</div>
+          </div>
+          <div class="mg-step">
+            <div class="mg-num">2</div>
+            <div class="mg-text">Trace around your foot carefully — longest toe to heel.</div>
+          </div>
+          <div class="mg-step">
+            <div class="mg-num">3</div>
+            <div class="mg-text">Measure the length in mm. Use the CM column above to find your size. When between sizes, size up.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   MODULE 3 — CURRENCY
+═══════════════════════════════════════════════════════ */
+
+const CURRENCIES = [
+  { code:'EUR', symbol:'€', name:'Euro',           flag:'🇪🇺', locales:['fr','de','es','it','fi','nl','pt'] },
+  { code:'USD', symbol:'$', name:'US Dollar',       flag:'🇺🇸', locales:['en-US'] },
+  { code:'GBP', symbol:'£', name:'British Pound',   flag:'🇬🇧', locales:['en-GB'] },
+  { code:'SEK', symbol:'kr',name:'Swedish Krona',   flag:'🇸🇪', locales:['sv'] },
+  { code:'NOK', symbol:'kr',name:'Norwegian Krone', flag:'🇳🇴', locales:['nb','nn'] },
+  { code:'DKK', symbol:'kr',name:'Danish Krone',    flag:'🇩🇰', locales:['da'] },
+  { code:'CHF', symbol:'Fr',name:'Swiss Franc',     flag:'🇨🇭', locales:['de-CH'] },
+  { code:'CAD', symbol:'$', name:'Canadian Dollar', flag:'🇨🇦', locales:['en-CA','fr-CA'] },
+];
+
+// Base prices in EUR
+const BASE_PRICES_EUR = [89, 109, 95];
+
+// Fallback rates (EUR base) — used if API fails
+const FALLBACK_RATES = { EUR:1, USD:1.087, GBP:0.856, SEK:11.45, NOK:11.68, DKK:7.46, CHF:0.963, CAD:1.48 };
+
+let rates = { ...FALLBACK_RATES };
+let activeCurrency = 'EUR';
+let showOrig = true;
+let autoOn   = true;
+let suggestedCode = null;
+
+async function fetchRates() {
+  const dot  = document.getElementById('rateDot');
+  const text = document.getElementById('rateStatusText');
+  try {
+    // Free public API — no key needed, EUR base
+    const res  = await fetch('https://open.er-api.com/v6/latest/EUR');
+    const data = await res.json();
+    if (data && data.rates) {
+      rates = data.rates;
+      dot.className  = 'rate-dot live';
+      text.textContent = 'Live rates · ' + new Date().toLocaleTimeString();
+      document.getElementById('rateUpdated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+    } else { throw new Error('bad data'); }
+  } catch {
+    dot.className  = 'rate-dot cache';
+    text.textContent = 'Fallback rates (offline)';
+    document.getElementById('rateUpdated').textContent = 'Fallback rates';
+  }
+  buildRateTable();
+  updatePrices();
+}
+
+function detectLocale() {
+  const lang = navigator.language || 'en';
+  const base = lang.split('-')[0].toLowerCase();
+  const found = CURRENCIES.find(c =>
+    c.locales.some(l => l.toLowerCase() === lang.toLowerCase() || l.toLowerCase() === base)
+  );
+  const banner = document.getElementById('detectBanner');
+  const flag   = document.getElementById('detectFlag');
+  const msg    = document.getElementById('detectMsg');
+  const sub    = document.getElementById('detectSub');
+  const btn    = document.getElementById('detectAccept');
+
+  if (found && found.code !== 'EUR') {
+    suggestedCode = found.code;
+    flag.textContent = found.flag;
+    msg.textContent  = `We detected ${found.name} (${found.code}) for your region.`;
+    sub.textContent  = `Click to use ${found.symbol} prices across the store.`;
+    btn.style.display = 'block';
+    btn.onclick = () => { setCurrency(found.code); banner.style.display = 'none'; };
+  } else {
+    flag.textContent = '🇫🇷';
+    msg.textContent  = 'Prices shown in EUR · your region default.';
+    sub.textContent  = 'You can switch currency at any time below.';
+  }
+}
+
+function buildCurrencyPills() {
+  const wrap = document.getElementById('currencySelector');
+  wrap.innerHTML = '';
+  CURRENCIES.forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'cur-btn' + (c.code === activeCurrency ? ' active' : '');
+    b.innerHTML = `<span>${c.flag}</span><span class="cur-sym">${c.symbol}</span><span>${c.code}</span>`;
+    b.onclick = () => setCurrency(c.code);
+    wrap.appendChild(b);
+  });
+}
+
+function setCurrency(code) {
+  activeCurrency = code;
+  buildCurrencyPills();
+  updatePrices();
+  buildRateTable();
+}
+
+function updatePrices() {
+  const cur = CURRENCIES.find(c => c.code === activeCurrency);
+  const rate = rates[activeCurrency] || 1;
+  const showOrigElem = document.getElementById('origToggle').classList.contains('on');
+
+  BASE_PRICES_EUR.forEach((eur, i) => {
+    const converted = (eur * rate);
+    const formatted = activeCurrency === 'EUR'
+      ? eur.toFixed(2)
+      : converted.toFixed(2);
+
+    const el = document.getElementById('price' + i);
+    el.classList.add('updating');
+    setTimeout(() => {
+      document.getElementById('sym' + i).textContent = cur ? cur.symbol : activeCurrency + ' ';
+      document.getElementById('val' + i).textContent = formatted;
+      const origEl = document.getElementById('orig' + i);
+      if (activeCurrency !== 'EUR' && showOrigElem) {
+        origEl.textContent = `Base price: €${eur.toFixed(2)} EUR`;
+      } else {
+        origEl.textContent = '';
+      }
+      el.classList.remove('updating');
+    }, 150);
+  });
+}
+
+function buildRateTable() {
+  const tbody = document.getElementById('rateTableBody');
+  tbody.innerHTML = '';
+  CURRENCIES.forEach(c => {
+    const r = (rates[c.code] || 0).toFixed(4);
+    // Simulate tiny change for visual interest (deterministic based on code)
+    const seed   = c.code.charCodeAt(0) % 3;
+    const change = seed === 0 ? '+0.12%' : seed === 1 ? '-0.08%' : '+0.03%';
+    const cls    = seed === 1 ? 'down' : 'up';
+    const tr     = document.createElement('tr');
+    if (c.code === activeCurrency) tr.className = 'active-row';
+    tr.innerHTML = `
+      <td>${c.flag} ${c.name}</td>
+      <td>${c.code}</td>
+      <td class="rate-val">${r}</td>
+      <td><span class="rate-change ${cls}">${change}</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function toggleAuto() {
+  autoOn = !autoOn;
+  const t = document.getElementById('autoToggle');
+  const tx = document.getElementById('autoToggleText');
+  t.classList.toggle('on', autoOn);
+  tx.textContent = autoOn ? 'On — using browser locale' : 'Off — manual selection';
+}
+function toggleOrig() {
+  const t = document.getElementById('origToggle');
+  t.classList.toggle('on');
+  updatePrices();
+}
+function toggleTax() {
+  const t  = document.getElementById('taxToggle');
+  const on = t.classList.toggle('on');
+  document.getElementById('taxNotice').style.display = on ? 'block' : 'none';
+  document.getElementById('taxToggleText').textContent = on ? 'On — notice shown to buyer' : 'Off';
+}
+
+// INIT currency module
+buildCurrencyPills();
+detectLocale();
+fetchRates();
+setInterval(fetchRates, 60000); // refresh every 60s
+
+
+/* ═══════════════════════════════════════════════════════
+   MODULE 5 — SHOE SIZE
+═══════════════════════════════════════════════════════ */
+
+const SIZE_DATA = [
+  { eu:35,  usW:'4',    usM:'3',    uk:'2.5', cm:22.0, fit:'narrow', note:'Very narrow fit — true to size for narrow feet.' },
+  { eu:36,  usW:'5',    usM:'4',    uk:'3.5', cm:22.5, fit:'narrow', note:'Narrow fit. If you have wide feet, size up.' },
+  { eu:37,  usW:'6',    usM:'5',    uk:'4',   cm:23.5, fit:'regular',note:'Regular fit. Recommend your exact EU size.' },
+  { eu:38,  usW:'7',    usM:'6',    uk:'5',   cm:24.0, fit:'regular',note:'True to size for most foot types.' },
+  { eu:39,  usW:'8',    usM:'6.5',  uk:'5.5', cm:25.0, fit:'regular',note:'True to size for most foot types.' },
+  { eu:40,  usW:'8.5',  usM:'7',    uk:'6.5', cm:25.5, fit:'regular',note:'True to size. If wide foot, consider sizing up.' },
+  { eu:41,  usW:'9.5',  usM:'8',    uk:'7',   cm:26.0, fit:'regular',note:'True to size for most foot types.' },
+  { eu:42,  usW:'10.5', usM:'9',    uk:'8',   cm:26.5, fit:'wide',   note:'Slightly wide last. Narrow feet may size down.' },
+  { eu:43,  usW:'11',   usM:'9.5',  uk:'9',   cm:27.5, fit:'wide',   note:'Wide last. True to size for wide feet.' },
+  { eu:44,  usW:'12',   usM:'10',   uk:'9.5', cm:28.0, fit:'wide',   note:'Wide last. Standard men\'s size.' },
+  { eu:45,  usW:'13',   usM:'11',   uk:'10.5',cm:29.0, fit:'wide',   note:'Larger last — true for wide feet, size down if narrow.' },
+  { eu:46,  usW:'—',    usM:'12',   uk:'11',  cm:29.5, fit:'wide',   note:'Men\'s extended size. Size down if borderline.' },
+  { eu:47,  usW:'—',    usM:'13',   uk:'12',  cm:30.5, fit:'wide',   note:'Extended size. Only available in selected styles.' },
+];
+
+const SYSTEMS = [
+  { id:'eu',  label:'EU',       field:'eu',  inputLabel:'Enter your EU size',         type:'number', min:35, max:47, step:1 },
+  { id:'usW', label:'US Women', field:'usW', inputLabel:'Enter your US Women\'s size', type:'select' },
+  { id:'usM', label:'US Men',   field:'usM', inputLabel:'Enter your US Men\'s size',   type:'select' },
+  { id:'uk',  label:'UK',       field:'uk',  inputLabel:'Enter your UK size',          type:'select' },
+  { id:'cm',  label:'CM',       field:'cm',  inputLabel:'Enter your foot length (cm)', type:'number', min:22, max:31, step:0.5 },
+];
+
+let activeSystem = 'eu';
+let highlightedEU = null;
+
+function buildSystemTabs() {
+  const wrap = document.getElementById('sysTabs');
+  wrap.innerHTML = '';
+  SYSTEMS.forEach(s => {
+    const b = document.createElement('button');
+    b.className = 'sys-tab' + (s.id === activeSystem ? ' active' : '');
+    b.textContent = s.id === 'eu' ? '🇫🇮  ' + s.label + ' (Finland standard)' : s.label;
+    b.onclick = () => { activeSystem = s.id; buildSystemTabs(); buildSizeSelect(); };
+    wrap.appendChild(b);
+  });
+}
+
+function buildSizeSelect() {
+  const sys = SYSTEMS.find(s => s.id === activeSystem);
+  const sel = document.getElementById('sizeSelect');
+  document.getElementById('inputLabel').textContent = sys.inputLabel;
+  sel.innerHTML = '<option value="">— select your size —</option>';
+
+  const vals = [...new Set(SIZE_DATA.map(r => r[sys.field]).filter(v => v && v !== '—'))];
+  vals.forEach(v => {
+    const o = document.createElement('option');
+    o.value = v; o.textContent = v;
+    sel.appendChild(o);
+  });
+}
+
+function convertSize() {
+  const sys = SYSTEMS.find(s => s.id === activeSystem);
+  const raw = document.getElementById('sizeSelect').value;
+  if (!raw) return;
+
+  const val = isNaN(raw) ? raw : parseFloat(raw);
+  let row = SIZE_DATA.find(r => {
+    const rv = r[sys.field];
+    return rv == val || (typeof val === 'number' && Math.abs(parseFloat(rv) - val) < 0.26);
+  });
+
+  if (!row) {
+    // Nearest CM match
+    if (sys.id === 'cm') {
+      row = SIZE_DATA.reduce((a, b) =>
+        Math.abs(b.cm - val) < Math.abs(a.cm - val) ? b : a
+      );
+    }
+  }
+  if (!row) return;
+
+  highlightedEU = row.eu;
+  renderResult(row, sys.id);
+  renderFitAdvisor(row);
+  buildRefTable();
+}
+
+function renderResult(row, activeSys) {
+  const fields = [
+    { label:'EU',       val: row.eu,  sys:'eu'  },
+    { label:'US',       val: activeSys.startsWith('usM') ? row.usM + ' ♂' : row.usW + ' ♀', sys:'usW' },
+    { label:'UK',       val: row.uk,  sys:'uk'  },
+    { label:'CM',       val: row.cm + ' cm', sys:'cm' },
+  ];
+  const wrap = document.getElementById('sizeResult');
+  wrap.innerHTML = '';
+  fields.forEach(f => {
+    const d = document.createElement('div');
+    const isActive = f.sys === activeSys || (activeSys === 'usM' && f.sys === 'usW');
+    d.className = 'sr-item' + (isActive ? ' active-sys' : ' highlight');
+    d.innerHTML = `<div class="sr-label">${f.label}</div><div class="sr-val">${f.val}</div>`;
+    wrap.appendChild(d);
+  });
+}
+
+function renderFitAdvisor(row) {
+  const el = document.getElementById('fitAdvisor');
+  el.classList.add('visible');
+  document.getElementById('fitTitle').textContent = `Fit advice · EU ${row.eu}`;
+  document.getElementById('fitText').textContent  = row.note;
+  const tags = document.getElementById('fitTags');
+  tags.innerHTML = '';
+  const fitMap = {
+    narrow:  [{ text:'Narrow last',  cls:'y' }, { text:'Size up for wide feet', cls:'y' }],
+    regular: [{ text:'Regular fit',  cls:'g' }, { text:'True to size', cls:'g' }],
+    wide:    [{ text:'Wide last',    cls:'g' }, { text:'Size down for narrow feet', cls:'y' }],
+  };
+  (fitMap[row.fit] || []).forEach(t => {
+    const s = document.createElement('span');
+    s.className = 'fit-tag ' + t.cls;
+    s.textContent = t.text;
+    tags.appendChild(s);
+  });
+  // Between-sizes advice
+  const advice = document.createElement('span');
+  advice.className = 'fit-tag g';
+  advice.textContent = 'Between sizes? Always size up';
+  tags.appendChild(advice);
+}
+
+function buildRefTable() {
+  const tbody = document.getElementById('sizeRefBody');
+  tbody.innerHTML = '';
+  SIZE_DATA.forEach(row => {
+    const tr = document.createElement('tr');
+    if (highlightedEU && row.eu === highlightedEU) tr.className = 'row-highlight';
+    const fitBadge = row.fit === 'regular'
+      ? '<span style="color:#16a34a;font-size:.7rem">Regular</span>'
+      : row.fit === 'narrow'
+        ? '<span style="color:#a16207;font-size:.7rem">Narrow</span>'
+        : '<span style="color:var(--fr-blue);font-size:.7rem">Wide</span>';
+    tr.innerHTML = `<td>${row.eu}</td><td>${row.usW}</td><td>${row.usM}</td><td>${row.uk}</td><td>${row.cm}</td><td>${fitBadge}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// INIT size module
+buildSystemTabs();
+buildSizeSelect();
+buildRefTable();
+</script>
+</body>
+</html>

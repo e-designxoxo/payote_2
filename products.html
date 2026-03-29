@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PAYOTE — Collection</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --sand:#f5ede0;--cream:#faf8f5;--ink:#16140f;--muted:#847a6e;
+      --accent:#c4a46b;--blue:#002395;--red:#ED2939;--green:#1a7a42;
+      --serif:'Cormorant Garamond',Georgia,serif;
+      --sans:'Outfit',system-ui,sans-serif;
+      --r:1.4rem;--sh:0 6px 32px rgba(22,20,15,.09);
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:var(--sans);background:var(--cream);color:var(--ink);-webkit-font-smoothing:antialiased}
+
+    /* ── PROJECT NAV ─────────────────────── */
+    .project-nav{background:var(--ink);position:sticky;top:0;z-index:200}
+    .project-nav::before{content:'';display:block;height:3px;background:linear-gradient(to right,var(--blue) 33%,rgba(255,255,255,.5) 33% 66%,var(--red) 66%)}
+    .pnav-inner{max-width:1300px;margin:auto;display:flex;align-items:center;gap:0;padding:.7rem 2rem;flex-wrap:wrap;gap:.3rem}
+    .pnav-brand{font-family:var(--serif);font-size:1.3rem;font-weight:300;letter-spacing:.08em;color:#fff;text-decoration:none;margin-right:1.5rem}
+    .pnav-link{font-size:.72rem;letter-spacing:.06em;color:rgba(255,255,255,.5);text-decoration:none;padding:.35rem .8rem;border-radius:999px;border:1px solid transparent;transition:all .2s;white-space:nowrap}
+    .pnav-link:hover{color:#fff;border-color:rgba(255,255,255,.2)}
+    .pnav-link.active{color:#fff;background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2)}
+
+    /* ── HEADER ──────────────────────────── */
+    .shop-header{
+      background: linear-gradient(145deg, #050d1f 0%, #0a1628 40%, #0d1f3c 70%, #091528 100%);
+      color:#fff;
+      padding:4rem 2rem 3rem;position:relative;overflow:hidden;
+    }
+    .shop-header::before{content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse 60% 80% at 80% 50%,rgba(0,35,149,.15),transparent);
+      pointer-events:none}
+    .sh-inner{max-width:1300px;margin:auto;position:relative;z-index:1}
+    .sh-eye{font-size:.6rem;letter-spacing:.4em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:.8rem}
+    .sh-title{font-family:var(--serif);font-size:clamp(2.5rem,5vw,4.5rem);font-weight:300;line-height:1.1}
+    .sh-title em{font-style:italic;color:var(--accent)}
+    .sh-sub{font-size:.9rem;color:rgba(255,255,255,.5);margin-top:.8rem;max-width:500px;line-height:1.8}
+
+    /* ── FILTER BAR ──────────────────────── */
+    .filter-bar{background:#fff;border-bottom:1px solid rgba(22,20,15,.07);position:sticky;top:45px;z-index:150}
+    .fb-inner{max-width:1300px;margin:auto;padding:.75rem 2rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+    .fb-label{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-right:.5rem}
+    .filter-btn{border:1.5px solid rgba(22,20,15,.12);background:transparent;border-radius:999px;padding:.38rem .9rem;font-size:.75rem;font-family:var(--sans);cursor:pointer;color:var(--ink);transition:all .2s}
+    .filter-btn:hover,.filter-btn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+    .fb-count{margin-left:auto;font-size:.72rem;color:var(--muted)}
+
+    /* ── PRODUCT GRID ────────────────────── */
+    .products-section{max-width:1300px;margin:auto;padding:2.5rem 2rem 6rem}
+    .products-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem}
+
+    .product-card{
+      background:#fff;border-radius:var(--r);overflow:hidden;
+      border:1px solid rgba(22,20,15,.06);box-shadow:var(--sh);
+      display:flex;flex-direction:column;
+      transition:transform .3s cubic-bezier(.16,1,.3,1),box-shadow .3s;
+      cursor:pointer;
+    }
+    .product-card:hover{transform:translateY(-5px);box-shadow:0 16px 48px rgba(22,20,15,.13)}
+    .product-card:hover .pc-img-inner{transform:scale(1.05)}
+
+    .pc-img-wrap{aspect-ratio:4/3;overflow:hidden;position:relative;background:var(--sand)}
+    .pc-img-inner{width:100%;height:100%;transition:transform .55s cubic-bezier(.16,1,.3,1)}
+    .pc-img-inner img{width:100%;height:100%;object-fit:cover;display:block}
+    .pc-badge{
+      position:absolute;top:.7rem;left:.7rem;
+      font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;
+      padding:.22rem .65rem;border-radius:999px;font-weight:500;
+    }
+    .badge-best{background:var(--ink);color:#fff}
+    .badge-new{background:var(--blue);color:#fff}
+    .badge-eco{background:rgba(26,122,66,.9);color:#fff}
+    .badge-collab{background:var(--red);color:#fff}
+
+    .pc-body{padding:1rem 1.1rem 1.2rem;flex:1;display:flex;flex-direction:column;gap:.4rem}
+    .pc-name{font-family:var(--serif);font-size:1.05rem;font-weight:400;line-height:1.2}
+    .pc-desc{font-size:.75rem;color:var(--muted);line-height:1.6;flex:1}
+    .pc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:.6rem;gap:.5rem}
+    .pc-price{font-family:var(--serif);font-size:1.2rem;font-weight:400;white-space:nowrap}
+    .pc-add{
+      background:var(--ink);color:#fff;border:none;border-radius:999px;
+      padding:.42rem 1rem;font-size:.72rem;font-family:var(--sans);cursor:pointer;
+      position:relative;overflow:hidden;transition:box-shadow .3s;white-space:nowrap;
+    }
+    .pc-add::before{content:'';position:absolute;inset:0;background:var(--blue);transform:scaleX(0);transform-origin:left;transition:transform .35s cubic-bezier(.4,0,.2,1)}
+    .pc-add:hover{box-shadow:0 4px 18px rgba(0,35,149,.25)}
+    .pc-add:hover::before{transform:scaleX(1)}
+    .pc-add span{position:relative;z-index:1}
+
+    /* ── PRODUCT MODAL ───────────────────── */
+    .modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(22,20,15,.55);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .3s}
+    .modal-overlay.open{opacity:1;pointer-events:all}
+    .modal{
+      position:fixed;top:50%;left:50%;transform:translate(-50%,-46%);
+      z-index:501;width:min(860px,95vw);max-height:90vh;overflow-y:auto;
+      background:#fff;border-radius:1.8rem;
+      box-shadow:0 24px 80px rgba(22,20,15,.25);
+      opacity:0;transform:translate(-50%,-44%) scale(.96);
+      transition:opacity .35s,transform .35s cubic-bezier(.16,1,.3,1);
+      pointer-events:none;
+    }
+    .modal-overlay.open .modal{opacity:1;transform:translate(-50%,-50%) scale(1);pointer-events:all}
+    .modal-close{position:absolute;top:1.2rem;right:1.2rem;width:32px;height:32px;border-radius:50%;border:1px solid rgba(22,20,15,.12);background:#fff;cursor:pointer;font-size:.85rem;color:var(--muted);transition:background .2s,color .2s;z-index:10;display:flex;align-items:center;justify-content:center}
+    .modal-close:hover{background:var(--ink);color:#fff}
+    .modal-inner{display:grid;grid-template-columns:1fr 1fr;min-height:400px}
+    .modal-img{background:var(--sand);border-radius:1.8rem 0 0 1.8rem;overflow:hidden}
+    .modal-img img{width:100%;height:100%;object-fit:cover;display:block}
+    .modal-body{padding:2.2rem 2rem}
+    .mb-eye{font-size:.6rem;letter-spacing:.35em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}
+    .mb-name{font-family:var(--serif);font-size:1.8rem;font-weight:400;line-height:1.15;margin-bottom:.6rem}
+    .mb-price{font-family:var(--serif);font-size:1.5rem;font-weight:300;color:var(--ink);margin-bottom:1rem}
+    .mb-desc{font-size:.85rem;color:var(--muted);line-height:1.8;margin-bottom:1.4rem}
+    .mb-size-label{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem;display:flex;justify-content:space-between;align-items:center}
+    .mb-size-label a{color:var(--blue);text-decoration:none;font-size:.65rem}
+    .size-grid{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.4rem}
+    .size-btn{border:1.5px solid rgba(22,20,15,.12);background:#fff;border-radius:.6rem;padding:.4rem .7rem;font-size:.8rem;font-family:var(--sans);cursor:pointer;transition:all .2s;min-width:40px;text-align:center}
+    .size-btn:hover{border-color:var(--ink)}
+    .size-btn.selected{background:var(--ink);color:#fff;border-color:var(--ink)}
+    .size-btn.oos{opacity:.3;cursor:not-allowed;text-decoration:line-through}
+    .mb-add-btn{
+      width:100%;background:var(--ink);color:#fff;border:none;border-radius:999px;
+      padding:1rem;font-size:.88rem;font-family:var(--sans);font-weight:500;cursor:pointer;
+      position:relative;overflow:hidden;transition:box-shadow .3s;
+      display:flex;align-items:center;justify-content:center;gap:.6rem;
+    }
+    .mb-add-btn::before{content:'';position:absolute;inset:0;background:var(--blue);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.4,0,.2,1)}
+    .mb-add-btn:hover{box-shadow:0 8px 28px rgba(0,35,149,.28)}
+    .mb-add-btn:hover::before{transform:scaleX(1)}
+    .mb-add-btn span{position:relative;z-index:1}
+    .mb-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1rem}
+    .mb-tag{border:1px solid rgba(22,20,15,.1);border-radius:999px;padding:.22rem .7rem;font-size:.68rem;color:var(--muted)}
+
+    /* ── CART DRAWER ─────────────────────── */
+    .cart-overlay{position:fixed;inset:0;z-index:300;background:rgba(22,20,15,.4);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s}
+    .cart-overlay.open{opacity:1;pointer-events:all}
+    .cart-drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,96vw);z-index:301;background:var(--cream);box-shadow:-12px 0 60px rgba(22,20,15,.15);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .4s cubic-bezier(.16,1,.3,1)}
+    .cart-overlay.open .cart-drawer{transform:translateX(0)}
+    .cart-head{padding:1.5rem 1.8rem 1rem;border-bottom:1px solid rgba(22,20,15,.07);display:flex;align-items:center;justify-content:space-between}
+    .cart-head h2{font-family:var(--serif);font-size:1.4rem;font-weight:400}
+    .cart-head-close{width:30px;height:30px;border-radius:50%;border:1px solid rgba(22,20,15,.12);background:transparent;cursor:pointer;font-size:.8rem;color:var(--muted);transition:background .2s,color .2s;display:flex;align-items:center;justify-content:center}
+    .cart-head-close:hover{background:var(--ink);color:#fff}
+    .free-ship-bar{margin:0 1.8rem;padding:.8rem 1rem;background:rgba(0,35,149,.05);border:1px solid rgba(0,35,149,.1);border-radius:.8rem;font-size:.72rem;color:var(--blue);display:flex;align-items:center;gap:.6rem;margin-top:1rem}
+    .fsb-track{flex:1;height:4px;background:rgba(0,35,149,.12);border-radius:999px;overflow:hidden}
+    .fsb-fill{height:100%;background:linear-gradient(to right,var(--blue),#4169e1);border-radius:999px;transition:width .5s cubic-bezier(.16,1,.3,1)}
+    .cart-items{flex:1;overflow-y:auto;padding:1.2rem 1.8rem;display:flex;flex-direction:column;gap:.8rem}
+    .cart-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.8rem;color:var(--muted)}
+    .cart-empty-icon{font-size:3rem;opacity:.3}
+    .cart-empty h3{font-family:var(--serif);font-size:1.4rem;font-weight:300;color:var(--ink)}
+    .cart-item{display:flex;gap:.9rem;align-items:flex-start;padding:.9rem;border-radius:1rem;background:#fff;border:1px solid rgba(22,20,15,.06);animation:slideIn .3s ease}
+    @keyframes slideIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+    .ci-img{width:68px;height:68px;border-radius:.7rem;overflow:hidden;flex-shrink:0;background:var(--sand)}
+    .ci-img img{width:100%;height:100%;object-fit:cover}
+    .ci-body{flex:1;min-width:0}
+    .ci-name{font-family:var(--serif);font-size:.95rem;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ci-meta{font-size:.7rem;color:var(--muted);margin-top:.15rem}
+    .ci-row{display:flex;align-items:center;justify-content:space-between;margin-top:.5rem}
+    .ci-price{font-size:.9rem;font-weight:500}
+    .ci-qty{display:flex;align-items:center;gap:.25rem;border:1px solid rgba(22,20,15,.12);border-radius:999px;padding:.15rem .3rem;background:var(--cream)}
+    .qty-btn{width:22px;height:22px;border-radius:50%;border:none;background:transparent;cursor:pointer;font-size:.9rem;transition:background .2s;display:flex;align-items:center;justify-content:center}
+    .qty-btn:hover{background:rgba(22,20,15,.08)}
+    .qty-num{font-size:.78rem;font-weight:500;min-width:18px;text-align:center}
+    .ci-remove{border:none;background:transparent;cursor:pointer;color:var(--muted);font-size:.7rem;padding:.15rem;transition:color .2s}
+    .ci-remove:hover{color:var(--red)}
+    .cart-foot{padding:1.2rem 1.8rem 1.8rem;border-top:1px solid rgba(22,20,15,.07);background:#fff}
+    .cart-subtotal{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.3rem}
+    .cs-label{font-size:.75rem;color:var(--muted)}
+    .cs-val{font-family:var(--serif);font-size:1.4rem;font-weight:400}
+    .cart-note{font-size:.7rem;color:var(--muted);margin-bottom:1rem}
+    .trust-row{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1rem}
+    .trust-pill{display:flex;align-items:center;gap:.35rem;border:1px solid rgba(22,20,15,.08);background:var(--cream);border-radius:999px;padding:.25rem .7rem;font-size:.65rem;color:var(--muted)}
+    .trust-dot{width:5px;height:5px;border-radius:50%}
+    .checkout-btn{width:100%;background:var(--ink);color:#fff;border:none;border-radius:999px;padding:.95rem;font-size:.88rem;font-family:var(--sans);font-weight:500;cursor:pointer;position:relative;overflow:hidden;transition:box-shadow .3s;display:flex;align-items:center;justify-content:center;gap:.6rem}
+    .checkout-btn::before{content:'';position:absolute;inset:0;background:var(--blue);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.4,0,.2,1)}
+    .checkout-btn:hover{box-shadow:0 6px 24px rgba(0,35,149,.3)}
+    .checkout-btn:hover::before{transform:scaleX(1)}
+    .checkout-btn span{position:relative;z-index:1}
+    .pay-logos{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center;margin-top:.8rem}
+    .pay-logo{background:var(--cream);border:1px solid rgba(22,20,15,.09);border-radius:.45rem;padding:.28rem .65rem;font-size:.65rem;color:var(--muted)}
+
+    /* Cart icon in header */
+    #cartBtn{position:fixed;bottom:2rem;right:2rem;z-index:200;background:var(--ink);color:#fff;border:none;border-radius:999px;padding:.7rem 1.2rem;font-size:.8rem;font-family:var(--sans);cursor:pointer;display:flex;align-items:center;gap:.5rem;box-shadow:0 6px 28px rgba(22,20,15,.3);transition:transform .3s,box-shadow .3s;position:relative;overflow:hidden}
+    #cartBtn::before{content:'';position:absolute;inset:0;background:var(--blue);transform:scaleX(0);transform-origin:right;transition:transform .4s cubic-bezier(.4,0,.2,1)}
+    #cartBtn:hover{transform:scale(1.04);box-shadow:0 8px 36px rgba(0,35,149,.3)}
+    #cartBtn:hover::before{transform:scaleX(1)}
+    #cartBtn>*{position:relative;z-index:1}
+    .cart-badge-num{background:#fff;color:var(--ink);border-radius:999px;width:20px;height:20px;font-size:.65rem;font-weight:700;display:flex;align-items:center;justify-content:center;transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+    .cart-badge-num.bump{transform:scale(1.6)}
+
+    @media(max-width:900px){.products-grid{grid-template-columns:repeat(2,1fr)}.modal-inner{grid-template-columns:1fr}}
+    @media(max-width:520px){.products-grid{grid-template-columns:1fr}}
+  </style>
+  <script src="i18n.js"></script>
+</head>
+<body>
+
+<!-- SHARED NAV -->
+<nav class="project-nav">
+  <div class="pnav-inner">
+    <a href="index.html" class="pnav-brand">PAYOTE</a>
+    <a href="homepage.html"                 class="pnav-link" data-i18n="nav.store">Store</a>
+    <a href="products.html"                 class="pnav-link active" data-i18n="nav.collection">Collection</a>
+    <a href="cart_language.html"            class="pnav-link" data-i18n="nav.cart">Cart &amp; Language</a>
+    <a href="currency_selector.html"        class="pnav-link">Currency</a>
+    <a href="shoe_size.html"                class="pnav-link">Shoe sizes</a>
+    <a href="payment_shipping_returns.html" class="pnav-link">Payment &amp; Shipping</a>
+  </div>
+</nav>
+
+<!-- HEADER -->
+<div class="shop-header">
+  <div class="sh-inner">
+    <div style="position:absolute;top:1.2rem;right:2rem;z-index:2">
+      <button id="langSwitcherBtn" onclick="window.i18n && window.i18n.toggle()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:.4rem 1rem;font-size:.72rem;font-family:var(--sans);color:#fff;cursor:pointer;letter-spacing:.05em">EN / FR</button>
+    </div>
+    <div class="sh-eye" data-i18n="hero.eyebrow">Summer 2025 · Handcrafted in France</div>
+    <h1 class="sh-title">The <em data-i18n="nav.collection">collection.</em></h1>
+    <p class="sh-sub">Every pair made in France — Perpignan &amp; Mauléon. Natural rope sole, recycled cotton canvas, vegetable ink. Sizes 28–47.</p>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="fb-inner">
+    <span class="fb-label">Filter</span>
+    <button class="filter-btn on" onclick="filter('all',this)">All</button>
+    <button class="filter-btn" onclick="filter('women',this)">Women</button>
+    <button class="filter-btn" onclick="filter('men',this)">Men</button>
+    <button class="filter-btn" onclick="filter('plain',this)">Plain</button>
+    <button class="filter-btn" onclick="filter('printed',this)">Printed</button>
+    <button class="filter-btn" onclick="filter('collab',this)">Collabs</button>
+    <button class="filter-btn" onclick="filter('eco',this)">Eco</button>
+    <span class="fb-count" id="fbCount">24 products</span>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<div class="products-section">
+  <div class="products-grid" id="productGrid"></div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <div class="modal-inner">
+      <div class="modal-img"><img id="mImg" src="" alt=""/></div>
+      <div class="modal-body">
+        <div class="mb-eye" id="mEye"></div>
+        <div class="mb-name" id="mName"></div>
+        <div class="mb-price" id="mPrice"></div>
+        <div class="mb-desc" id="mDesc"></div>
+        <div class="mb-size-label">
+          <span>EU Size</span>
+          <a href="shoe_size.html">Size guide →</a>
+        </div>
+        <div class="size-grid" id="mSizes"></div>
+        <button class="mb-add-btn" onclick="addFromModal()">
+          <span>🛍 Add to cart</span>
+        </button>
+        <div class="mb-tags" id="mTags"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CART OVERLAY -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCartEv(event)">
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-head">
+      <h2>Your basket</h2>
+      <button class="cart-head-close" onclick="closeCart()">✕</button>
+    </div>
+    <div class="free-ship-bar" id="freeShipBar">
+      <span id="freeShipMsg">Add €60 more for free shipping</span>
+      <div class="fsb-track"><div class="fsb-fill" id="fsbFill" style="width:0%"></div></div>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-foot" id="cartFoot" style="display:none">
+      <div class="cart-subtotal">
+        <span class="cs-label">Subtotal</span>
+        <span class="cs-val" id="cartTotal">€0</span>
+      </div>
+      <div class="cart-note">Shipping &amp; taxes calculated at checkout</div>
+      <div class="trust-row">
+        <div class="trust-pill"><span class="trust-dot" style="background:#22c55e"></span>Secure checkout</div>
+        <div class="trust-pill"><span class="trust-dot" style="background:var(--blue)"></span>International cards</div>
+        <div class="trust-pill"><span class="trust-dot" style="background:var(--red)"></span>Easy returns</div>
+      </div>
+      <button class="checkout-btn"><span>🔒</span><span>Proceed to checkout</span><span>→</span></button>
+      <div class="pay-logos">
+        <span class="pay-logo">Visa</span><span class="pay-logo">Mastercard</span>
+        <span class="pay-logo">PayPal</span><span class="pay-logo">Apple Pay</span><span class="pay-logo">Klarna</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FLOATING CART BUTTON -->
+<button id="cartBtn" onclick="openCart()">
+  🛍
+  <span id="cartBadge" class="cart-badge-num">0</span>
+</button>
+
+<script>
+/* ══════════════════════════════════════════
+   PRODUCT CATALOGUE — Real Payote data
+   Images served directly from payote.fr CDN
+══════════════════════════════════════════ */
+const PRODUCTS = [
+  {
+    id:1, name:'Espadrille Paris', slug:'espadrille-paris',
+    category:['women','men','printed'], badge:'best',
+    price:39, priceEUR:'€39',
+    img:'https://payote.fr/cdn/shop/files/espadrille-paris_1_800x.jpg?v=1680016731',
+    desc:'Iconic Payote print — the Paris cityscape across a canvas upper. Cotton/polyester blend, natural rope sole. Unisex.',
+    tags:['Unisex','Printed','Made in Perpignan'],
+    sizes:[35,36,37,38,39,40,41,42,43,44,45,46,47],
+    oos:[28,29,30,45,46]
+  },
+  {
+    id:2, name:'Espadrille Denim', slug:'espadrille-jeans',
+    category:['women','men','plain'], badge:'best',
+    price:39, priceEUR:'€39',
+    img:'https://payote.fr/cdn/shop/products/espadrille-jeans-payote_800x.jpg?v=1680016731',
+    desc:'Regenerated cotton denim canvas — the wardrobe staple. Goes with everything, ages beautifully. Natural rope sole.',
+    tags:['Unisex','Plain','Eco-responsible'],
+    sizes:[35,36,37,38,39,40,41,42,43,44,45,46,47],
+    oos:[46,47]
+  },
+  {
+    id:3, name:'Espadrille Rouge', slug:'espadrille-rouge',
+    category:['women','men','plain'], badge:null,
+    price:39, priceEUR:'€39',
+    img:'https://payote.fr/cdn/shop/products/espadrille-rouge-payote_800x.jpg?v=1680016731',
+    desc:'Flamboyant red canvas from recycled cotton. Made in Mauléon, Basque Country. The bold French statement.',
+    tags:['Unisex','Plain','Recycled cotton'],
+    sizes:[35,36,37,38,39,40,41,42,43,44,45,46,47],
+    oos:[]
+  },
+  {
+    id:4, name:'Espadrille Franck — Boats', slug:'espadrille-franck',
+    category:['women','men','printed'], badge:'new',
+    price:43, priceEUR:'€43',
+    img:'https://payote.fr/cdn/shop/products/espadrille-bateaux-payote_800x.jpg?v=1680016731',
+    desc:'Deep navy canvas with sailboat print. Satin finish polyester, vegetable ink. For those who love the sea.',
+    tags:['Unisex','Printed','Satin finish'],
+    sizes:[35,36,37,38,39,40,41,42,43,44,45,46,47],
+    oos:[35,36]
+  },
+  {
+    id:5, name:'Espadrille Océan — Recycled', slug:'espadrille-recyclee-ocean',
+    category:['women','men','eco'], badge:'eco',
+    price:47, priceEUR:'€47',
+    img:'https://payote.fr/cdn/shop/products/espadrille-ocean-payote_800x.jpg?v=1680016731',
+    desc:'65% SEAQUAL fibre from recovered marine plastic. Each pair removes plastic from the Mediterranean. Whale canvas print.',
+    tags:['Eco','SEAQUAL fibre','Marine plastic'],
+    sizes:[35,36,37,38,39,40,41,42,43,44,45,46,47],
+    oos:[45,46,47]
+  },
+  {
+    id:6, name:'Espadrille Rock', slug:'espadrille-rock',
+    category:['women','men','printed'], badge:null,
+    price:43, priceEUR:'€43',
+    img:'https://payote.fr/cdn/shop/products/espadrille-rock-payote_800x.jpg?v=1680016731',
+    desc:'Electric guitars, lips and skulls on deep blue canvas. Satin polyester with vegetable ink. For the bold ones.',
+    tags:['Unisex','Printed','Rock vibes'],
+    sizes:[35,36,37,38,39,40,41,42,43,44,45,46,47],
+    oos:[35]
+  },
+  {
+    id:7, name:'Espadrille Capucine — Flowers', slug:'espadrille-capucine',
+    category:['women','printed'], badge:'new',
+    price:43, priceEUR:'€43',
+    img:'https://payote.fr/cdn/shop/products/espadrille-capucine-payote_800x.jpg?v=1680016731',
+    desc:'Vibrant red, yellow and blue poppy flowers. Skin-friendly materials, casual chic mood. Women\'s silhouette.',
+    tags:['Women','Printed','Floral'],
+    sizes:[35,36,37,38,39,40,41,42],
+    oos:[]
+  },
+  {
+    id:8, name:'Espadrille Dorian — Tropical', slug:'espadrille-dorian',
+    category:['women','men','printed'], badge:null,
+    price:43, priceEUR:'€43',
+    img:'https://payote.fr/cdn/shop/products/espadrille-dorian-payote_800x.jpg?v=1680016731',
+    desc:'Yellow canvas with tropical print. Inner cotton, outer polyester with vegetable-ink printing. Summer mood all year.',
+    tags:['Unisex','Printed','Tropical'],
+    sizes:[35,36,37,38,39,40,41,42,43,44,45,46,47],
+    oos:[46,47]
+  },
+  {
+    id:9, name:'Espadrille Orange', slug:'espadrille-orange',
+    category:['women','men','plain'], badge:null,
+    price:39, priceEUR:'€39',
+    img:'https://payote.fr/cdn/shop/products/espadrille-orange-payote_800x.jpg?v=1680016731',
+    desc:'Juicy, sparkling orange from recycled cotton canvas. Handmade in Mauléon. 14 steps to make each pair.',
+    tags:['Unisex','Plain','Recycled cotton'],
+    sizes:[35,36,37,38,39,40,41,42,43,44,45,46,47],
+    oos:[]
+  },
+  {
+    id:10, name:'Espadrille Bandana Noir', slug:'espadrille-bandana-noir',
+    category:['women','men','printed'], badge:null,
+    price:43, priceEUR:'€43',
+    img:'https://payote.fr/cdn/shop/products/espadrille-bandana-noir-payote_800x.jpg?v=1680016731',
+    desc:'Seventies spirit — black canvas with bandana print. Cotton/polyester, vegetable ink. Timeless rebel energy.',
+    tags:['Unisex','Printed','Seventies'],
+    sizes:[35,36,37,38,39,40,41,42,43,44,45,46,47],
+    oos:[35,36,46,47]
+  },
+  {
+    id:11, name:'Espadrille Tour Eiffel', slug:'espadrille-tour-eiffel',
+    category:['women','men','collab','printed'], badge:'collab',
+    price:49, priceEUR:'€49',
+    img:'https://payote.fr/cdn/shop/products/espadrille-tour-eiffel-payote_800x.jpg?v=1680016731',
+    desc:'Official Eiffel Tower collaboration. The Paris icon screen-printed with vegetable ink on cream canvas.',
+    tags:['Collab','Tour Eiffel','Limited'],
+    sizes:[35,36,37,38,39,40,41,42,43,44,45,46,47],
+    oos:[45,46,47]
+  },
+  {
+    id:12, name:'Espadrille Harry Potter', slug:'espadrille-harry-potter',
+    category:['women','men','collab','printed'], badge:'collab',
+    price:49, priceEUR:'€49',
+    img:'https://payote.fr/cdn/shop/products/espadrille-harry-potter-payote_800x.jpg?v=1680016731',
+    desc:'Official Warner Bros x Payote collab. Hogwarts motifs on navy canvas. For wizards of all sizes.',
+    tags:['Collab','Warner Bros','Harry Potter'],
+    sizes:[35,36,37,38,39,40,41,42,43,44,45,46,47],
+    oos:[35,36,46,47]
+  },
+  {
+    id:13, name:'Espadrille France Rugby', slug:'espadrille-france-rugby',
+    category:['men','collab','printed'], badge:'collab',
+    price:49, priceEUR:'€49',
+    img:'https://payote.fr/cdn/shop/products/espadrille-france-rugby-payote_800x.jpg?v=1680016731',
+    desc:'Official France Rugby Federation x Payote. Tricolore spirit on canvas. Support les Bleus in style.',
+    tags:['Collab','Rugby','France'],
+    sizes:[38,39,40,41,42,43,44,45,46,47],
+    oos:[]
+  },
+  {
+    id:14, name:'Espadrille Beige — Mariage', slug:'espadrille-beige-pour-mariage',
+    category:['women','men','plain'], badge:null,
+    price:39, priceEUR:'€39',
+    img:'https://payote.fr/cdn/shop/products/espadrille-beige-mariage-payote_800x.jpg?v=1680016731',
+    desc:'The ultimate elegant plain. Natural beige canvas — perfect for weddings, ceremonies, summer garden parties.',
+    tags:['Unisex','Plain','Wedding'],
+    sizes:[35,36,37,38,39,40,41,42,43,44,45,46,47],
+    oos:[]
+  },
+  {
+    id:15, name:'Espadrille Espagne', slug:'espadrille-espagne',
+    category:['women','men','printed'], badge:null,
+    price:43, priceEUR:'€43',
+    img:'https://payote.fr/cdn/shop/products/espadrille-espagne-payote_800x.jpg?v=1680016731',
+    desc:'Spanish flag print on canvas — caliente energy for summer. Vegetable ink, cotton/polyester blend.',
+    tags:['Unisex','Printed','Países'],
+    sizes:[35,36,37,38,39,40,41,42,43,44,45,46,47],
+    oos:[46,47]
+  },
+  {
+    id:16, name:'Espadrille APF France Handicap', slug:'espadrille-apf-x-payote',
+    category:['women','men','collab','eco'], badge:'eco',
+    price:49, priceEUR:'€49',
+    img:'https://payote.fr/cdn/shop/products/espadrille-apf-payote_800x.jpg?v=1680016731',
+    desc:'€5 donated to APF France Handicap per pair sold. Handmade in Perpignan from responsible materials.',
+    tags:['Solidarity','Collab','APF','Limited'],
+    sizes:[35,36,37,38,39,40,41,42,43,44,45,46,47],
+    oos:[45,46,47]
+  },
+];
+
+/* ══════════════════════════════════════════
+   CART STATE — localStorage persistence
+══════════════════════════════════════════ */
+let cart = JSON.parse(localStorage.getItem('payote_cart') || '[]');
+let activeFilter = 'all';
+let modalProduct = null;
+let selectedSize = null;
+const FREE_SHIP = 60;
+
+function saveCart() { localStorage.setItem('payote_cart', JSON.stringify(cart)); }
+
+function cartTotal() { return cart.reduce((s,i) => s + i.price * i.qty, 0); }
+
+function cartCount() { return cart.reduce((s,i) => s + i.qty, 0); }
+
+/* ══════════════════════════════════════════
+   RENDER PRODUCTS
+══════════════════════════════════════════ */
+function renderProducts(items) {
+  const grid = document.getElementById('productGrid');
+  document.getElementById('fbCount').textContent = items.length + ' product' + (items.length !== 1 ? 's' : '');
+  grid.innerHTML = '';
+  items.forEach(p => {
+    const badgeLabels = {best:'Best seller',new:'New',eco:'Eco',collab:'Collab'};
+    const t = (k) => (window.i18n ? window.i18n.t(k) : null);
+    const badgeHtml = p.badge
+      ? `<span class="pc-badge badge-${p.badge}">${t('product.'+p.badge) || badgeLabels[p.badge]}</span>`
+      : '';
+    const el = document.createElement('div');
+    el.className = 'product-card';
+    el.innerHTML = `
+      <div class="pc-img-wrap">
+        <div class="pc-img-inner">
+          <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.parentElement.parentElement.style.background='#e8ddd2';this.style.display='none'"/>
+        </div>
+        ${badgeHtml}
+      </div>
+      <div class="pc-body">
+        <div class="pc-name">${p.name}</div>
+        <div class="pc-desc">${p.desc.substring(0,80)}…</div>
+        <div class="pc-foot">
+          <div class="pc-price">${p.priceEUR}</div>
+          <button class="pc-add" onclick="event.stopPropagation();quickAdd(${p.id})"><span data-i18n="product.add">+ Add</span></button>
+        </div>
+      </div>
+    `;
+    el.onclick = () => openModal(p.id);
+    grid.appendChild(el);
+  });
+}
+
+function filter(cat, btn) {
+  activeFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const filtered = cat === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.category.includes(cat));
+  renderProducts(filtered);
+}
+
+/* ══════════════════════════════════════════
+   PRODUCT MODAL
+══════════════════════════════════════════ */
+function openModal(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  modalProduct = p;
+  selectedSize = null;
+
+  document.getElementById('mImg').src = p.img;
+  document.getElementById('mImg').alt = p.name;
+  document.getElementById('mEye').textContent = p.tags.join(' · ');
+  document.getElementById('mName').textContent = p.name;
+  document.getElementById('mPrice').textContent = p.priceEUR;
+  document.getElementById('mDesc').textContent = p.desc;
+  document.getElementById('mTags').innerHTML = p.tags.map(t => `<span class="mb-tag">${t}</span>`).join('');
+
+  // Sizes
+  const sg = document.getElementById('mSizes');
+  sg.innerHTML = '';
+  p.sizes.forEach(s => {
+    const b = document.createElement('button');
+    b.className = 'size-btn' + (p.oos.includes(s) ? ' oos' : '');
+    b.textContent = s;
+    b.disabled = p.oos.includes(s);
+    b.onclick = () => {
+      if (p.oos.includes(s)) return;
+      document.querySelectorAll('.size-btn').forEach(x => x.classList.remove('selected'));
+      b.classList.add('selected');
+      selectedSize = s;
+    };
+    sg.appendChild(b);
+  });
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModalBtn();
+}
+function closeModalBtn() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function addFromModal() {
+  if (!modalProduct) return;
+  if (!selectedSize) {
+    // Shake the size grid
+    const sg = document.getElementById('mSizes');
+    sg.style.animation = 'none';
+    sg.offsetHeight;
+    sg.style.animation = 'shakeSizes .4s ease';
+    return;
+  }
+  addToCart(modalProduct, selectedSize);
+  closeModalBtn();
+  openCart();
+}
+
+function quickAdd(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  // Pick first available size
+  const avail = p.sizes.filter(s => !p.oos.includes(s));
+  if (!avail.length) return;
+  addToCart(p, avail[0]);
+  openCart();
+}
+
+/* ══════════════════════════════════════════
+   CART LOGIC
+══════════════════════════════════════════ */
+function addToCart(p, size) {
+  const key = `${p.id}-${size}`;
+  const existing = cart.find(i => i.key === key);
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ key, id: p.id, name: p.name, price: p.price, priceEUR: p.priceEUR, size, img: p.img, qty: 1 });
+  }
+  saveCart();
+  updateCartUI();
+  bumpBadge();
+}
+
+function removeFromCart(key) {
+  cart = cart.filter(i => i.key !== key);
+  saveCart();
+  updateCartUI();
+}
+
+function changeQty(key, delta) {
+  const item = cart.find(i => i.key === key);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) removeFromCart(key);
+  else { saveCart(); updateCartUI(); }
+}
+
+function updateCartUI() {
+  // Badge
+  const count = cartCount();
+  document.getElementById('cartBadge').textContent = count;
+
+  // Free ship bar
+  const total = cartTotal();
+  const pct = Math.min(100, (total / FREE_SHIP) * 100);
+  document.getElementById('fsbFill').style.width = pct + '%';
+  document.getElementById('freeShipMsg').textContent =
+    total >= FREE_SHIP ? '🎉 Free shipping unlocked!' : `Add €${(FREE_SHIP - total).toFixed(0)} more for free shipping`;
+
+  // Items
+  const wrap = document.getElementById('cartItems');
+  const foot = document.getElementById('cartFoot');
+
+  if (cart.length === 0) {
+    wrap.innerHTML = `<div class="cart-empty"><div class="cart-empty-icon">🛍</div><h3>Your basket is empty</h3><p style="font-size:.8rem;color:var(--muted);max-width:200px;line-height:1.7">Add your first pair of French espadrilles.</p></div>`;
+    foot.style.display = 'none';
+  } else {
+    foot.style.display = 'block';
+    wrap.innerHTML = '';
+    cart.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'cart-item';
+      el.innerHTML = `
+        <div class="ci-img"><img src="${item.img}" alt="${item.name}" onerror="this.parentElement.style.background='#e8ddd2';this.style.display='none'"/></div>
+        <div class="ci-body">
+          <div class="ci-name">${item.name}</div>
+          <div class="ci-meta">EU ${item.size} · Made in France</div>
+          <div class="ci-row">
+            <div class="ci-qty">
+              <button class="qty-btn" onclick="changeQty('${item.key}',-1)">−</button>
+              <div class="qty-num">${item.qty}</div>
+              <button class="qty-btn" onclick="changeQty('${item.key}',1)">+</button>
+            </div>
+            <div class="ci-price">€${(item.price * item.qty).toFixed(2)}</div>
+          </div>
+        </div>
+        <button class="ci-remove" onclick="removeFromCart('${item.key}')">✕</button>
+      `;
+      wrap.appendChild(el);
+    });
+    document.getElementById('cartTotal').textContent = '€' + cartTotal().toFixed(2);
+  }
+}
+
+function bumpBadge() {
+  const b = document.getElementById('cartBadge');
+  b.classList.add('bump');
+  setTimeout(() => b.classList.remove('bump'), 350);
+}
+
+function openCart() { document.getElementById('cartOverlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeCart() { document.getElementById('cartOverlay').classList.remove('open'); document.body.style.overflow = ''; }
+function closeCartEv(e) { if (e.target === document.getElementById('cartOverlay')) closeCart(); }
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+/* Re-render on language switch */
+document.addEventListener('langchange', () => {
+  const filtered = activeFilter === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.category.includes(activeFilter));
+  renderProducts(filtered);
+});
+
+renderProducts(PRODUCTS);
+updateCartUI();
+</script>
+</body>
+</html>
