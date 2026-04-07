@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
 
+    
 #v1 .cinematic {
   height: 100svh;
   min-height: 600px;
@@ -275,13 +276,69 @@
       display: flex; align-items: center; justify-content: center;
     }
 
+
+#v1 .hero-slider {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+#v1 .hero-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  transform: scale(1.03);
+}
+
+#v1 .hero-slide.active {
+  opacity: 1;
+}
+
+#v1 .hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(to bottom, rgba(5,13,31,.32), rgba(5,13,31,.58)),
+    linear-gradient(to right, rgba(5,13,31,.18), rgba(5,13,31,.08));
+}
+
+#v1 .hero-dots {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  display: flex;
+  gap: .55rem;
+}
+
+#v1 .hero-dots .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.35);
+  border: 1px solid rgba(255,255,255,.35);
+  transition: background .3s, transform .3s;
+}
+
+#v1 .hero-dots .dot.active {
+  background: #fff;
+  transform: scale(1.1);
+}
+
+    
     /* Animated grain texture */
     #v1 .cinematic::before {
       content: '';
       position: absolute; inset: -200%;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
       opacity: .6; animation: grainShift 1.8s steps(2) infinite;
-      pointer-events: none; z-index: 1;
+      pointer-events: none; z-index: 3;
     }
 
     @keyframes grainShift {
@@ -298,7 +355,7 @@
       border-radius: 50%;
       background: radial-gradient(circle, rgba(196,164,107,.12) 0%, transparent 70%);
       top: 50%; left: 50%; transform: translate(-50%,-50%);
-      z-index: 0;
+      z-index: 2;
       animation: orbPulse 8s ease-in-out infinite;
     }
     @keyframes orbPulse {
@@ -335,7 +392,8 @@
     }
 
     #v1 .cin-content {
-      position: relative; z-index: 10;
+      position: relative; 
+      z-index: 10;
       text-align: center; padding: 2rem;
       max-width: 900px;
     }
@@ -893,8 +951,73 @@
 <!-- ═══════════════════════════════════════════════════
      VERSION 1 — CINEMATIC
 ════════════════════════════════════════════════════ -->
-<div class="cinematic">
 
+  <div class="cinematic">
+<!-- ═══════════════════════════════════════════════════
+     VERSION 1 — CINEMATIC
+════════════════════════════════════════════════════ -->
+<div class="version active" id="v1">
+  <div class="cinematic">
+
+    <div class="hero-slider">
+      <div class="hero-slide active" style="background-image: url('images/campaign-1.jpg');"></div>
+      <div class="hero-slide" style="background-image: url('images/campaign-2.jpg');"></div>
+      <div class="hero-slide" style="background-image: url('images/campaign-3.jpg');"></div>
+    </div>
+
+    <div class="hero-overlay"></div>
+
+    <div class="cinematic-orb"></div>
+    <div class="fr-edge">
+      <span class="b"></span><span class="w"></span><span class="r"></span>
+    </div>
+
+    <div class="cin-content">
+      <div class="cin-eyebrow">
+        <span class="red-dot"></span>Summer 2025 · Handcrafted in France
+      </div>
+      <h1 class="cin-title">
+        <span class="line"><span class="line-inner" data-i18n="hero.line1">Wear France.</span></span>
+        <span class="line"><span class="line-inner">Feel the <em data-i18n="hero.line2">Sud.</em></span></span>
+        <span class="line"><span class="line-inner" data-i18n="hero.line3">Ship worldwide.</span></span>
+      </h1>
+      <p class="cin-sub" data-i18n="hero.sub">French-crafted espadrilles. Designed for the world. Available in EUR, USD · EN, FR.</p>
+      <div class="cin-actions">
+        <button class="btn-cine-primary"><span>Discover the collection →</span></button>
+        <button class="btn-cine-secondary"><span>Our story</span></button>
+      </div>
+    </div>
+
+    <div class="hero-dots">
+      <span class="dot active"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+
+    <div class="scroll-hint">Scroll</div>
+  </div>
+
+  <div class="trust-strip">
+    <div class="trust-inner">
+      <div class="trust-item"><span class="dot"></span> Worldwide shipping</div>
+      <div class="trust-item"><span class="dot"></span> Secure checkout · SSL</div>
+      <div class="trust-item"><span class="dot"></span> Pay in EUR or USD</div>
+      <div class="trust-item"><span class="dot"></span> Easy returns</div>
+      <div class="trust-item"><span class="dot"></span> Handcrafted in France</div>
+    </div>
+  </div>
+
+  <div id="v1-products"></div>
+  <div id="v1-sizes"></div>
+  <div id="v1-footer"></div>
+</div>
+
+
+
+
+
+
+  
   <!-- SLIDER -->
   <div class="hero-slider">
     <div class="hero-slide active" style="background-image: url('images/campaign-1.jpg');"></div>
