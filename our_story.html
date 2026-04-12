@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PAYOTE — Our Story</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sand: #f5ede0;
+      --warm: #ede3d4;
+      --cream: #faf8f5;
+      --ink: #16140f;
+      --muted: #847a6e;
+      --accent: #c4a46b;
+      --fr-blue: #002395;
+      --fr-red: #ED2939;
+      --fr-white: #ffffff;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Outfit', system-ui, sans-serif;
+      --shadow: 0 10px 40px rgba(22,20,15,.08);
+      --deep-shadow: 0 28px 80px rgba(22,20,15,.14);
+      --r: 2rem;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      background: var(--cream);
+      color: var(--ink);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .project-nav {
+      background: var(--ink);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      position: relative;
+    }
+    .project-nav::before {
+      content: '';
+      display: block;
+      height: 2px;
+      background: linear-gradient(to right, var(--fr-blue) 33%, rgba(255,255,255,.4) 33% 66%, var(--fr-red) 66%);
+    }
+    .pnav-inner {
+      max-width: 1360px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0 2rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .pnav-inner::-webkit-scrollbar { display: none; }
+    .pnav-brand {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 300;
+      letter-spacing: .1em;
+      color: #fff;
+      padding: .75rem 1.2rem .75rem 0;
+      border-right: 1px solid rgba(255,255,255,.1);
+      margin-right: .5rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .pnav-link {
+      font-size: .7rem;
+      letter-spacing: .06em;
+      color: rgba(255,255,255,.45);
+      padding: .78rem .9rem;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+    .pnav-link:hover { color: rgba(255,255,255,.85); }
+    .pnav-link.active { color: #fff; border-bottom-color: var(--accent); }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: rgba(250,248,245,.84);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(22,20,15,.06);
+    }
+    .header-inner {
+      max-width: 1360px;
+      margin: auto;
+      padding: 1.1rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
+    .brand-eyebrow {
+      font-size: .6rem;
+      letter-spacing: .35em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .brand-name {
+      font-family: var(--serif);
+      font-size: 1.9rem;
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: .08em;
+    }
+    .main-nav {
+      display: flex;
+      gap: 2rem;
+    }
+    .main-nav a {
+      font-size: .8rem;
+      letter-spacing: .05em;
+      position: relative;
+      padding-bottom: 4px;
+    }
+    .main-nav a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      background: linear-gradient(to right, var(--fr-blue) 33%, var(--fr-white) 33% 66%, var(--fr-red) 66%);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .25s ease;
+    }
+    .main-nav a:hover::after,
+    .main-nav a.active::after { transform: scaleX(1); }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+    }
+    .pill-btn {
+      border: 1px solid rgba(22,20,15,.12);
+      background: transparent;
+      border-radius: 999px;
+      padding: .48rem .95rem;
+      font-size: .74rem;
+      font-family: var(--sans);
+      color: var(--ink);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cart-btn {
+      border: none;
+      background: var(--ink);
+      color: #fff;
+      border-radius: 999px;
+      padding: .52rem 1rem;
+      font-size: .74rem;
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .cart-badge {
+      background: #fff;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: .1rem .45rem;
+      font-size: .66rem;
+      font-weight: 600;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 86vh;
+      background:
+        radial-gradient(circle at 18% 22%, rgba(196,164,107,.18), transparent 30%),
+        radial-gradient(circle at 84% 20%, rgba(0,35,149,.09), transparent 26%),
+        linear-gradient(160deg, #f7f3ec 0%, #ede7da 54%, #faf8f5 100%);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(to right, var(--fr-blue) 33%, var(--fr-white) 33% 66%, var(--fr-red) 66%);
+    }
+    .hero-noise {
+      position: absolute;
+      inset: -15%;
+      opacity: .16;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='280' height='280' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+      animation: grainShift 7s linear infinite;
+    }
+    @keyframes grainShift {
+      0% { transform: translate(0,0); }
+      50% { transform: translate(-2%, 1%); }
+      100% { transform: translate(1%, -1%); }
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(2px);
+      mix-blend-mode: multiply;
+    }
+    .orb.o1 {
+      width: 300px;
+      height: 300px;
+      left: -40px;
+      top: 110px;
+      background: radial-gradient(circle, rgba(196,164,107,.30), transparent 70%);
+      animation: float1 8s ease-in-out infinite;
+    }
+    .orb.o2 {
+      width: 220px;
+      height: 220px;
+      right: 8%;
+      top: 100px;
+      background: radial-gradient(circle, rgba(0,35,149,.18), transparent 70%);
+      animation: float2 10s ease-in-out infinite;
+    }
+    .orb.o3 {
+      width: 420px;
+      height: 420px;
+      right: -120px;
+      bottom: -120px;
+      background: radial-gradient(circle, rgba(22,20,15,.10), transparent 72%);
+      animation: float3 12s ease-in-out infinite;
+    }
+    @keyframes float1 {
+      0%,100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(16px) scale(1.04); }
+    }
+    @keyframes float2 {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-14px); }
+    }
+    @keyframes float3 {
+      0%,100% { transform: translateX(0) translateY(0); }
+      50% { transform: translateX(-18px) translateY(-14px); }
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 1360px;
+      margin: auto;
+      padding: 5rem 2.5rem 4.5rem;
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    .hero-copy .eyebrow {
+      font-size: .65rem;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.2rem;
+    }
+    .hero-copy h1 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(3.1rem, 5.6vw, 5.8rem);
+      line-height: 0.98;
+      letter-spacing: .01em;
+      max-width: 9ch;
+    }
+    .hero-copy h1 em { font-style: italic; color: var(--fr-blue); }
+    .hero-copy p {
+      max-width: 520px;
+      color: var(--muted);
+      font-size: .95rem;
+      line-height: 1.9;
+      margin-top: 1.4rem;
+    }
+    .hero-actions {
+      margin-top: 2rem;
+      display: flex;
+      gap: .8rem;
+      flex-wrap: wrap;
+    }
+    .primary-btn,
+    .secondary-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: .92rem 1.65rem;
+      font-size: .8rem;
+      letter-spacing: .04em;
+    }
+    .primary-btn { background: var(--ink); color: #fff; }
+    .secondary-btn {
+      border: 1px solid rgba(22,20,15,.14);
+      color: var(--ink);
+      background: rgba(255,255,255,.72);
+    }
+
+    .hero-editorial {
+      position: relative;
+      min-height: 580px;
+    }
+    .story-panel {
+      position: absolute;
+      border-radius: 2rem;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(22,20,15,.05);
+      background: linear-gradient(160deg, #f1e8dc 0%, #e8ddd0 100%);
+    }
+    .story-panel::before {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .72rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(22,20,15,.30);
+    }
+    .story-panel.main {
+      inset: 10px 0 90px 80px;
+      box-shadow: var(--deep-shadow);
+      background: linear-gradient(to top, rgba(22,20,15,.12), rgba(22,20,15,.02)), #ece2d6;
+    }
+    .story-panel.main::before { content: 'Brand story visual'; }
+    .story-panel.card-top {
+      width: 220px;
+      height: 250px;
+      left: 0;
+      top: 0;
+      background: #f6f0e8;
+    }
+    .story-panel.card-top::before { content: 'French roots'; }
+    .story-panel.card-bottom {
+      width: 250px;
+      height: 180px;
+      left: 24px;
+      bottom: 0;
+      background: #efe7dc;
+    }
+    .story-panel.card-bottom::before { content: 'Craft & actions'; }
+    .floating-note {
+      position: absolute;
+      right: -12px;
+      top: 34px;
+      background: rgba(255,255,255,.84);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(22,20,15,.08);
+      border-radius: 999px;
+      padding: .7rem 1rem;
+      font-size: .68rem;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      box-shadow: var(--shadow);
+    }
+
+    .section {
+      padding: 4.8rem 2.5rem;
+    }
+    .section-inner {
+      max-width: 1360px;
+      margin: auto;
+    }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 2rem;
+      margin-bottom: 2.6rem;
+    }
+    .section-label {
+      font-size: .62rem;
+      letter-spacing: .34em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 300;
+      line-height: 1.08;
+      margin-top: .4rem;
+    }
+    .section-desc {
+      max-width: 430px;
+      color: var(--muted);
+      font-size: .85rem;
+      line-height: 1.9;
+    }
+
+    .story-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.4rem;
+    }
+    .story-card {
+      background: #fff;
+      border: 1px solid rgba(22,20,15,.05);
+      border-radius: 2rem;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform .3s ease, box-shadow .3s ease;
+      position: relative;
+    }
+    .story-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(22,20,15,.12);
+    }
+    .story-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(to right, var(--fr-blue) 33%, var(--fr-white) 33% 66%, var(--fr-red) 66%);
+      opacity: .95;
+    }
+    .story-visual {
+      aspect-ratio: 16 / 9;
+      background: linear-gradient(160deg, #eee4d7 0%, #e7dccf 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .story-visual::before {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .76rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(22,20,15,.32);
+    }
+    .story-visual.s1::before { content: 'Nos premiers pas'; }
+    .story-visual.s2::before { content: 'Made in France'; }
+    .story-visual.s3::before { content: 'Recyclage'; }
+    .story-visual.s4::before { content: 'Nos actions'; }
+    .story-body {
+      padding: 1.4rem 1.4rem 1.5rem;
+    }
+    .story-tag {
+      display: inline-block;
+      border-radius: 999px;
+      padding: .22rem .72rem;
+      font-size: .62rem;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      margin-bottom: .75rem;
+      background: rgba(0,35,149,.08);
+      color: var(--fr-blue);
+    }
+    .story-title {
+      font-family: var(--serif);
+      font-size: 1.55rem;
+      font-weight: 400;
+      line-height: 1.08;
+    }
+    .story-text {
+      margin-top: .65rem;
+      color: var(--muted);
+      font-size: .82rem;
+      line-height: 1.9;
+    }
+    .story-link {
+      margin-top: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .8rem;
+    }
+
+    .manifesto-band {
+      background: linear-gradient(180deg, rgba(255,255,255,.72), rgba(245,237,224,.68));
+      border-top: 1px solid rgba(22,20,15,.06);
+      border-bottom: 1px solid rgba(22,20,15,.06);
+    }
+    .manifesto-grid {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 1.4rem;
+      align-items: stretch;
+    }
+    .manifesto-main,
+    .manifesto-side {
+      background: rgba(255,255,255,.82);
+      border: 1px solid rgba(22,20,15,.06);
+      border-radius: 2rem;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+    .manifesto-main {
+      min-height: 360px;
+      background: linear-gradient(160deg, rgba(255,255,255,.78), rgba(245,237,224,.92));
+      padding: 2rem;
+    }
+    .manifesto-main::before {
+      content: '';
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      right: -30px;
+      top: -40px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(196,164,107,.28), transparent 70%);
+    }
+    .manifesto-main::after {
+      content: '';
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      left: -40px;
+      bottom: -50px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,35,149,.12), transparent 70%);
+    }
+    .manifesto-copy {
+      position: relative;
+      z-index: 2;
+      max-width: 540px;
+    }
+    .manifesto-copy h3 {
+      font-family: var(--serif);
+      font-size: 2.35rem;
+      font-weight: 300;
+      line-height: 1.05;
+    }
+    .manifesto-copy p {
+      margin-top: .95rem;
+      font-size: .86rem;
+      line-height: 1.95;
+      color: var(--muted);
+    }
+    .manifesto-side {
+      padding: 1.4rem;
+      display: grid;
+      gap: 1rem;
+      background: linear-gradient(180deg, #f8f4ee 0%, #f0e7dc 100%);
+    }
+    .value-card {
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(22,20,15,.06);
+      border-radius: 1.4rem;
+      padding: 1rem 1.05rem;
+    }
+    .value-card h4 {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      font-weight: 300;
+      margin-bottom: .25rem;
+    }
+    .value-card p {
+      font-size: .78rem;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    .site-footer {
+      background: var(--ink);
+      color: rgba(255,255,255,.7);
+      position: relative;
+      overflow: hidden;
+      margin-top: 4rem;
+    }
+    .site-footer::before {
+      content: '';
+      display: block;
+      height: 3px;
+      background: linear-gradient(to right, var(--fr-blue) 33%, rgba(255,255,255,.5) 33% 66%, var(--fr-red) 66%);
+    }
+    .footer-inner {
+      max-width: 1360px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 3rem;
+      padding: 3.8rem 2.5rem;
+    }
+    .footer-brand-name {
+      font-family: var(--serif);
+      font-size: 2.2rem;
+      font-weight: 300;
+      color: #fff;
+      margin-top: .4rem;
+    }
+    .footer-desc {
+      font-size: .82rem;
+      line-height: 1.85;
+      margin-top: .8rem;
+      max-width: 340px;
+    }
+    .footer-col h4 {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: rgba(255,255,255,.42);
+      margin-bottom: .9rem;
+    }
+    .footer-col a {
+      display: block;
+      margin-bottom: .45rem;
+      font-size: .82rem;
+      color: rgba(255,255,255,.65);
+    }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.07);
+      max-width: 1360px;
+      margin: auto;
+      padding: 1.2rem 2.5rem;
+      text-align: center;
+      font-size: .7rem;
+      color: rgba(255,255,255,.32);
+    }
+
+    @media (max-width: 1080px) {
+      .hero-inner,
+      .story-grid,
+      .manifesto-grid,
+      .footer-inner {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .header-inner,
+      .hero-inner,
+      .section,
+      .footer-inner,
+      .pnav-inner {
+        padding-left: 1.2rem;
+        padding-right: 1.2rem;
+      }
+      .header-inner {
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .main-nav { display: none; }
+      .hero-inner,
+      .story-grid,
+      .manifesto-grid,
+      .footer-inner {
+        grid-template-columns: 1fr;
+      }
+      .hero-editorial { min-height: 400px; }
+      .story-panel.main { inset: 30px 0 50px 20px; }
+      .story-panel.card-top,
+      .story-panel.card-bottom,
+      .floating-note { display: none; }
+      .section-head {
+        flex-direction: column;
+        align-items: start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="project-nav"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="homepage.html" class="brand">
+          <div class="brand-eyebrow">Brand story</div>
+          <div class="brand-name">PAYOTE</div>
+        </a>
+        <nav class="main-nav">
+          <a href="women.html">Women</a>
+          <a href="men.html">Men</a>
+          <a href="collections.html">Collections</a>
+          <a href="our_story.html" class="active">Our Story</a>
+        </nav>
+      </div>
+      <div class="header-right">
+        <button class="pill-btn">EN / FR</button>
+        <button class="pill-btn">USD / EUR</button>
+        <a href="products.html" class="pill-btn">Products</a>
+        <a href="payment_shipping_returns.html" class="cart-btn">Support <span class="cart-badge">3</span></a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-noise"></div>
+    <div class="orb o1"></div>
+    <div class="orb o2"></div>
+    <div class="orb o3"></div>
+
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <div class="eyebrow">C’est quoi Payote ?</div>
+        <h1>A French brand story shaped by <em>sun</em>, craft, and movement.</h1>
+        <p>
+          Born between the Mediterranean and the Pyrenees, Payote blends southern ease, French espadrille heritage, and a more conscious way of making. This page is the gateway to the brand: where it began, how it produces, what it rethinks, and what it chooses to stand for.
+        </p>
+        <div class="hero-actions">
+          <a href="#story-grid" class="primary-btn">Explore the story →</a>
+          <a href="collections.html" class="secondary-btn">Back to collections</a>
+        </div>
+      </div>
+
+      <div class="hero-editorial">
+        <div class="story-panel main"></div>
+        <div class="story-panel card-top"></div>
+        <div class="story-panel card-bottom"></div>
+        <div class="floating-note">Brand gateway</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="story-grid">
+    <div class="section-inner">
+      <div class="section-head">
+        <div>
+          <div class="section-label">Story chapters</div>
+          <div class="section-title">Four ways to understand Payote.</div>
+        </div>
+        <p class="section-desc">
+          Instead of hiding the brand story inside navigation, this page makes it readable. Each chapter deepens the same identity from a different angle: origin, manufacturing, responsibility, and concrete action.
+        </p>
+      </div>
+
+      <div class="story-grid">
+        <article class="story-card">
+          <div class="story-visual s1"></div>
+          <div class="story-body">
+            <span class="story-tag">Origin</span>
+            <div class="story-title">Nos premiers pas</div>
+            <div class="story-text">The beginning of the brand: where it comes from, what sparked it, and why espadrilles became the language of the project.</div>
+            <a href="nos_premiers_pas.html" class="story-link">Read this chapter →</a>
+          </div>
+        </article>
+
+        <article class="story-card">
+          <div class="story-visual s2"></div>
+          <div class="story-body">
+            <span class="story-tag">Craft</span>
+            <div class="story-title">Made in France</div>
+            <div class="story-text">A closer look at local production, manufacturing trust, and the value of making the origin legible to the customer.</div>
+            <a href="made_in_france.html" class="story-link">Read this chapter →</a>
+          </div>
+        </article>
+
+        <article class="story-card">
+          <div class="story-visual s3"></div>
+          <div class="story-body">
+            <span class="story-tag">Re-think</span>
+            <div class="story-title">Recyclage</div>
+            <div class="story-text">How the brand approaches reuse, material awareness, and a more responsible rhythm of production and consumption.</div>
+            <a href="recyclage.html" class="story-link">Read this chapter →</a>
+          </div>
+        </article>
+
+        <article class="story-card">
+          <div class="story-visual s4"></div>
+          <div class="story-body">
+            <span class="story-tag">Commitments</span>
+            <div class="story-title">Nos actions</div>
+            <div class="story-text">The practical side of values: what the brand actually does, supports, or improves beyond beautiful products and words.</div>
+            <a href="nos_actions.html" class="story-link">Read this chapter →</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section manifesto-band">
+    <div class="section-inner">
+      <div class="manifesto-grid">
+        <article class="manifesto-main">
+          <div class="manifesto-copy">
+            <div class="section-label">Why this page matters</div>
+            <h3>It gives the brand a voice before it asks for the sale.</h3>
+            <p>
+              A strong brand story page is not decorative. It reassures, differentiates, and gives meaning to the products. For an international audience, it is often the place where trust begins: not with pricing, but with origin, clarity, and coherence.
+            </p>
+            <p>
+              That is why this version sits above the subpages. “Our Story” becomes the entry point, while “Nos premiers pas”, “Made in France”, “Recyclage”, and “Nos actions” become structured deeper reads.
+            </p>
+          </div>
+        </article>
+
+        <aside class="manifesto-side">
+          <div class="value-card">
+            <h4>More premium</h4>
+            <p>The story is framed as a destination, not a hidden menu item.</p>
+          </div>
+          <div class="value-card">
+            <h4>More readable</h4>
+            <p>Visitors immediately understand what each chapter is about before clicking.</p>
+          </div>
+          <div class="value-card">
+            <h4>More credible</h4>
+            <p>Origin, production, and actions are presented as visible parts of the brand identity.</p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <div class="section-label" style="color:rgba(255,255,255,.35)">Payote redesigned</div>
+        <div class="footer-brand-name">A brand story page,<br/>not just a dropdown destination.</div>
+        <p class="footer-desc">This version turns “C’est quoi Payote ?” into a true entry point: more editorial, more premium, and better structured for deeper reading.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <a href="nos_premiers_pas.html">Nos premiers pas</a>
+        <a href="made_in_france.html">Made in France</a>
+        <a href="recyclage.html">Recyclage</a>
+        <a href="nos_actions.html">Nos actions</a>
+      </div>
+      <div class="footer-col">
+        <h4>Shop & support</h4>
+        <a href="women.html">Women</a>
+        <a href="men.html">Men</a>
+        <a href="collections.html">Collections</a>
+        <a href="payment_shipping_returns.html">Payment & Shipping</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 Payote · Our Story page redesign concept</div>
+  </footer>
+
+  <script src="layout.js"></script>
+</body>
+</html>
