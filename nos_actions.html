@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PAYOTE — Nos actions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #faf8f5;
+      --warm: #efe7da;
+      --ink: #16140f;
+      --muted: #847a6e;
+      --accent: #c4a46b;
+      --done: #d8792f;
+      --done-soft: rgba(216, 121, 47, 0.14);
+      --fr-blue: #002395;
+      --fr-red: #ED2939;
+      --fr-white: #ffffff;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Outfit', system-ui, sans-serif;
+      --shadow: 0 10px 40px rgba(22,20,15,.08);
+      --deep: 0 28px 80px rgba(22,20,15,.14);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      background: var(--cream);
+      color: var(--ink);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: rgba(250,248,245,.86);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(22,20,15,.06);
+    }
+    .header-inner {
+      max-width: 1360px;
+      margin: auto;
+      padding: 1.1rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+    }
+    .brand-name {
+      font-family: var(--serif);
+      font-size: 1.9rem;
+      letter-spacing: .08em;
+    }
+    .main-nav {
+      display: flex;
+      gap: 2rem;
+    }
+    .main-nav a {
+      font-size: .8rem;
+      position: relative;
+      padding-bottom: 4px;
+    }
+    .main-nav a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      background: linear-gradient(to right, var(--fr-blue) 33%, var(--fr-white) 33% 66%, var(--fr-red) 66%);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .25s ease;
+    }
+    .main-nav a:hover::after,
+    .main-nav a.active::after { transform: scaleX(1); }
+
+    .hero {
+      min-height: 92vh;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(160deg, rgba(247,243,236,.92) 0%, rgba(239,231,218,.92) 60%, rgba(250,248,245,.95) 100%),
+        url('images/actions-hero.jpg') center/cover no-repeat;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(to right, var(--fr-blue) 33%, var(--fr-white) 33% 66%, var(--fr-red) 66%);
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: .6;
+    }
+    .orb.o1 {
+      width: 280px;
+      height: 280px;
+      left: -40px;
+      top: 120px;
+      background: radial-gradient(circle, rgba(0,35,149,.12), transparent 70%);
+      animation: float1 10s ease-in-out infinite;
+    }
+    .orb.o2 {
+      width: 340px;
+      height: 340px;
+      right: -80px;
+      bottom: -100px;
+      background: radial-gradient(circle, rgba(216,121,47,.14), transparent 70%);
+      animation: float2 12s ease-in-out infinite;
+    }
+    .orb.o3 {
+      width: 180px;
+      height: 180px;
+      right: 18%;
+      top: 140px;
+      background: radial-gradient(circle, rgba(237,41,57,.08), transparent 70%);
+      animation: float3 8s ease-in-out infinite;
+    }
+    @keyframes float1 {
+      0%,100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(18px) scale(1.04); }
+    }
+    @keyframes float2 {
+      0%,100% { transform: translateY(0) translateX(0); }
+      50% { transform: translateY(-16px) translateX(-10px); }
+    }
+    @keyframes float3 {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .hero-inner {
+      max-width: 1360px;
+      margin: auto;
+      padding: 5rem 2.5rem;
+      display: grid;
+      grid-template-columns: .95fr 1.05fr;
+      gap: 3.2rem;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+    .label {
+      font-size: .6rem;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .hero h1 {
+      margin-top: .8rem;
+      font-family: var(--serif);
+      font-size: clamp(3rem, 5vw, 5.8rem);
+      font-weight: 300;
+      line-height: .95;
+      max-width: 10ch;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--done);
+      text-shadow: 0 0 20px rgba(216,121,47,.08);
+    }
+    .hero p {
+      margin-top: 1.2rem;
+      color: var(--muted);
+      max-width: 520px;
+      font-size: .95rem;
+      line-height: 1.95;
+    }
+
+    .actions-constellation {
+      position: relative;
+      min-height: 620px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .constellation-banner {
+      position: absolute;
+      inset: 70px 40px;
+      border-radius: 2.2rem;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(250,248,245,.76), rgba(250,248,245,.92)),
+        url('images/actions-banner.jpg') center/cover no-repeat;
+      box-shadow: 0 18px 50px rgba(22,20,15,.08);
+      border: 1px solid rgba(22,20,15,.05);
+    }
+    .constellation-banner::before {
+      content: 'Wide action visual';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: end;
+      justify-content: flex-start;
+      padding: 1.1rem 1.2rem;
+      font-size: .62rem;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      color: rgba(22,20,15,.34);
+    }
+    .ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(22,20,15,.08);
+      animation: spin 40s linear infinite;
+      z-index: 2;
+    }
+    .ring.r1 { width: 470px; height: 470px; }
+    .ring.r2 {
+      width: 330px; height: 330px;
+      border-style: dashed;
+      border-color: rgba(216,121,47,.22);
+      animation-direction: reverse;
+      animation-duration: 28s;
+    }
+    .ring.r3 {
+      width: 580px; height: 580px;
+      border-color: rgba(0,35,149,.10);
+      animation-duration: 60s;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes corePulse {
+      0%,100% { transform: scale(1); box-shadow: 0 30px 80px rgba(22,20,15,.12), inset 0 0 0 1px rgba(22,20,15,.05); }
+      50% { transform: scale(1.035); box-shadow: 0 36px 90px rgba(22,20,15,.15), inset 0 0 0 1px rgba(22,20,15,.05); }
+    }
+      to { transform: rotate(360deg); }
+    }
+
+    .core {
+      position: relative;
+      z-index: 3;
+      width: 235px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.95), rgba(255,255,255,.78) 35%, rgba(239,231,218,.95) 70%),
+        linear-gradient(160deg, #f1e7d8, #e6d8c5);
+      box-shadow: 0 30px 80px rgba(22,20,15,.12), inset 0 0 0 1px rgba(22,20,15,.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      animation: corePulse 6s ease-in-out infinite;
+    }
+    .core::before {
+      content: '';
+      position: absolute;
+      inset: 12px;
+      border-radius: 50%;
+      border: 1px solid rgba(216,121,47,.16);
+    }
+    .core::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--done), rgba(216,121,47,.15));
+      top: 20px;
+      right: 38px;
+      box-shadow: 0 0 0 12px rgba(216,121,47,.08);
+      animation: spin 12s linear infinite;
+      transform-origin: -56px 88px;
+    }
+    .core span {
+      position: relative;
+      z-index: 2;
+      letter-spacing: .2em;
+      font-size: .76rem;
+      text-transform: uppercase;
+      color: rgba(22,20,15,.55);
+    }
+
+    .section {
+      padding: 4.8rem 2.5rem;
+    }
+    .inner {
+      max-width: 1360px;
+      margin: auto;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(2.1rem, 3.2vw, 3rem);
+      font-weight: 300;
+      line-height: 1.05;
+      margin-top: .45rem;
+    }
+    .section-desc {
+      max-width: 420px;
+      color: var(--muted);
+      font-size: .84rem;
+      line-height: 1.9;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+      perspective: 1000px;
+    }
+    .card {
+      position: relative;
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      text-align: left;
+      padding: 2.2rem 2.2rem 2.2rem 3.35rem;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(8px);
+      border-radius: 50% 50% 46% 54% / 52% 46% 54% 48%;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(22,20,15,.05);
+      overflow: hidden;
+      isolation: isolate;
+      transition: transform .45s cubic-bezier(.16,1,.3,1), box-shadow .45s ease, border-radius .45s ease, background .35s ease;
+      animation: blobFloat 7s ease-in-out infinite;
+    }
+    .card:nth-child(2n) { animation-duration: 8.5s; }
+    .card:nth-child(3n) { animation-duration: 9.2s; }
+    .card:nth-child(1)::before { background: radial-gradient(circle, rgba(0,35,149,.12), transparent 72%); }
+    .card:nth-child(2)::before { background: radial-gradient(circle, rgba(216,121,47,.16), transparent 72%); }
+    .card:nth-child(3)::before { background: radial-gradient(circle, rgba(95,139,91,.16), transparent 72%); }
+    .card:nth-child(4)::before { background: radial-gradient(circle, rgba(237,41,57,.10), transparent 72%); }
+    .card:nth-child(5)::before { background: radial-gradient(circle, rgba(196,164,107,.16), transparent 72%); }
+    .card:nth-child(6)::before { background: radial-gradient(circle, rgba(22,20,15,.08), transparent 72%); }
+    .card:nth-child(1):hover { background: linear-gradient(160deg, rgba(240,245,255,.96), rgba(255,255,255,.94)); }
+    .card:nth-child(2):hover { background: linear-gradient(160deg, rgba(255,245,237,.96), rgba(255,255,255,.94)); }
+    .card:nth-child(3):hover { background: linear-gradient(160deg, rgba(242,249,240,.96), rgba(255,255,255,.94)); }
+    .card:nth-child(4):hover { background: linear-gradient(160deg, rgba(255,244,245,.96), rgba(255,255,255,.94)); }
+    .card:nth-child(5):hover { background: linear-gradient(160deg, rgba(250,247,238,.96), rgba(255,255,255,.94)); }
+    .card:nth-child(6):hover { background: linear-gradient(160deg, rgba(246,246,246,.96), rgba(255,255,255,.94)); }
+    .card:hover {
+      transform: translateY(-10px) rotate(-1deg) scale(1.02);
+      box-shadow: 0 22px 60px rgba(22,20,15,.14);
+      border-radius: 42% 58% 49% 51% / 47% 44% 56% 53%;
+    }
+    .card:hover::before {
+      transform: scale(1.18);
+      opacity: 1;
+    }
+    @keyframes blobFloat {
+      0%,100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .card .label {
+      color: rgba(22,20,15,.52);
+    }
+    .card h3 {
+      font-family: var(--serif);
+      font-weight: 300;
+      margin: .7rem 0 .6rem;
+      font-size: 1.65rem;
+      line-height: 1.02;
+      max-width: 12ch;
+    }
+    .card p {
+      font-size: .82rem;
+      color: var(--muted);
+      line-height: 1.85;
+      max-width: 23ch;
+      margin-left: .35rem;
+    }
+
+    .card-orbit {
+      position: absolute;
+      width: 54px;
+      height: 54px;
+      right: 1rem;
+      bottom: 1rem;
+      border-radius: 50%;
+      border: 1px solid rgba(0,35,149,.10);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-orbit::before,
+    .card-orbit::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+    }
+    .card-orbit::before {
+      width: 8px;
+      height: 8px;
+      background: var(--done);
+      box-shadow: 0 0 0 8px rgba(216,121,47,.10);
+    }
+    .card-orbit::after {
+      inset: 8px;
+      border: 1px dashed rgba(22,20,15,.10);
+      animation: spin 14s linear infinite;
+    }
+    .card:nth-child(1) .card-orbit { border-color: rgba(0,35,149,.16); }
+    .card:nth-child(2) .card-orbit { border-color: rgba(216,121,47,.18); }
+    .card:nth-child(3) .card-orbit { border-color: rgba(95,139,91,.20); }
+    .card:nth-child(4) .card-orbit { border-color: rgba(237,41,57,.16); }
+    .card:nth-child(5) .card-orbit { border-color: rgba(196,164,107,.18); }
+    .card:nth-child(6) .card-orbit { border-color: rgba(22,20,15,.16); }
+    .card-orbit::before {
+      width: 8px;
+      height: 8px;
+      background: var(--done);
+      box-shadow: 0 0 0 8px rgba(216,121,47,.10);
+    }
+    .card-orbit::after {
+      inset: 8px;
+      border: 1px dashed rgba(22,20,15,.10);
+      animation: spin 14s linear infinite;
+    }
+
+    .quote {
+      margin-top: 2rem;
+      padding: 3.4rem 3.2rem;
+      border-radius: 2rem;
+      background: linear-gradient(180deg, rgba(255,255,255,.96), #f3eee6);
+      text-align: center;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(22,20,15,.05);
+    }
+    .quote::before {
+      content: '';
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      right: -60px;
+      top: -80px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(216,121,47,.14), transparent 70%);
+    }
+    .quote::after {
+      content: '';
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      left: -60px;
+      bottom: -90px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,35,149,.08), transparent 70%);
+    }
+    .quote .quote-line {
+      position: absolute;
+      left: 2rem;
+      right: 2rem;
+      top: 1.1rem;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(22,20,15,.10), transparent);
+    }
+    .quote .quote-line.bottom {
+      top: auto;
+      bottom: 1.1rem;
+    }
+    .quote .quote-cross {
+      position: absolute;
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      border: 1px solid rgba(22,20,15,.06);
+      right: 2rem;
+      bottom: 1.8rem;
+    }
+    .quote .quote-cross::before,
+    .quote .quote-cross::after {
+      content: '';
+      position: absolute;
+      background: rgba(22,20,15,.08);
+    }
+    .quote .quote-cross::before {
+      width: 1px;
+      top: 16px;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .quote .quote-cross::after {
+      height: 1px;
+      left: 16px;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .quote p {
+      position: relative;
+      z-index: 2;
+      font-family: var(--serif);
+      font-size: clamp(2rem, 3vw, 3.2rem);
+      font-weight: 300;
+      line-height: 1.06;
+      max-width: 18ch;
+      margin: auto;
+    }
+    .quote em {
+      font-style: italic;
+      color: var(--done);
+    }
+
+    .footer {
+      margin-top: 4rem;
+      background: var(--ink);
+      color: #fff;
+    }
+    .footer::before {
+      content: '';
+      display: block;
+      height: 3px;
+      background: linear-gradient(to right, var(--fr-blue) 33%, rgba(255,255,255,.5) 33% 66%, var(--fr-red) 66%);
+    }
+    .footer-inner {
+      max-width: 1360px;
+      margin: auto;
+      padding: 3rem 2.5rem;
+    }
+
+    @media (max-width: 1100px) {
+      .hero-inner,
+      .grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .hero-inner > :first-child { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 900px) {
+      .hero-inner,
+      .grid,
+      .section-head {
+        grid-template-columns: 1fr;
+        display: grid;
+      }
+      .section-head {
+        gap: 1rem;
+        align-items: start;
+      }
+      .actions-constellation {
+        min-height: 440px;
+      }
+      .constellation-banner {
+        inset: 30px 10px;
+      }
+      .ring.r1 { width: 320px; height: 320px; }
+      .ring.r2 { width: 220px; height: 220px; }
+      .ring.r3 { width: 390px; height: 390px; }
+      .core { width: 190px; }
+    }
+
+    @media (max-width: 640px) {
+      .header-inner,
+      .hero-inner,
+      .section,
+      .footer-inner {
+        padding-left: 1.2rem;
+        padding-right: 1.2rem;
+      }
+      .header-inner {
+        flex-direction: column;
+        align-items: start;
+        gap: 1rem;
+      }
+      .main-nav {
+        gap: 1.2rem;
+        flex-wrap: wrap;
+      }
+      .card {
+        min-height: auto;
+        border-radius: 1.7rem;
+        animation: none;
+      }
+      .card:hover {
+        transform: translateY(-6px);
+        border-radius: 1.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand-name">PAYOTE</div>
+    <nav class="main-nav">
+      <a href="women.html">Women</a>
+      <a href="men.html">Men</a>
+      <a href="collections.html">Collections</a>
+      <a href="our_story.html" class="active">Our Story</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
+
+  <div class="hero-inner">
+    <div>
+      <div class="label">Nos actions</div>
+      <h1>What is said matters less than what is actually <em>done</em>.</h1>
+      <p>
+        This chapter is where the brand moves from narrative to proof. Not promises, not positioning — actions. Small or large, but real.
+      </p>
+    </div>
+
+    <div class="actions-constellation">
+      <div class="constellation-banner"></div>
+      <div class="ring r3"></div>
+      <div class="ring r1"></div>
+      <div class="ring r2"></div>
+      <div class="core"><span>Concrete actions</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="inner">
+    <div class="section-head">
+      <div>
+        <div class="label">Action system</div>
+        <div class="section-title">Not one promise, but a moving network of decisions.</div>
+      </div>
+      <p class="section-desc">
+        The point here is to make “actions” feel alive and interconnected. Not a dull checklist, but a living operating system around the brand.
+      </p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="label">Production</div>
+        <h3>Local manufacturing</h3>
+        <p>
+          Keeping production close reduces transport, improves control, and keeps value inside local ecosystems.
+        </p>
+        <div class="card-orbit"></div>
+      </div>
+      <div class="card">
+        <div class="label">Materials</div>
+        <h3>Better sourcing</h3>
+        <p>
+          Choosing materials with more traceability and lower impact is one of the most direct levers available.
+        </p>
+        <div class="card-orbit"></div>
+      </div>
+      <div class="card">
+        <div class="label">Circularity</div>
+        <h3>Recycling logic</h3>
+        <p>
+          Products are not designed as endpoints, but as elements that can be reused, repaired, or transformed.
+        </p>
+        <div class="card-orbit"></div>
+      </div>
+      <div class="card">
+        <div class="label">Social</div>
+        <h3>Human scale</h3>
+        <p>
+          Behind every product, there are people. Actions also mean respecting work, conditions, and relationships.
+        </p>
+        <div class="card-orbit"></div>
+      </div>
+      <div class="card">
+        <div class="label">Transparency</div>
+        <h3>Clear positioning</h3>
+        <p>
+          Saying what is done — and what is not — builds more trust than exaggerated claims.
+        </p>
+        <div class="card-orbit"></div>
+      </div>
+      <div class="card">
+        <div class="label">Evolution</div>
+        <h3>Continuous effort</h3>
+        <p>
+          No brand is perfect. What matters is the direction, the consistency, and the willingness to improve.
+        </p>
+        <div class="card-orbit"></div>
+      </div>
+    </div>
+
+    <div class="quote">
+      <div class="quote-line"></div>
+      <div class="quote-line bottom"></div>
+      <div class="quote-cross"></div>
+      <p>
+        Actions are not a chapter. They are the only thing that gives the story its <em>credibility</em>.
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <p>© 2026 Payote · Nos actions page</p>
+  </div>
+</footer>
+
+</body>
+</html>
