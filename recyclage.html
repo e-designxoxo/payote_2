@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PAYOTE — Recyclage</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --sand: #f5ede0;
+      --warm: #ede3d4;
+      --cream: #faf8f5;
+      --ink: #16140f;
+      --muted: #847a6e;
+      --accent: #c4a46b;
+      --fr-blue: #002395;
+      --fr-red: #ED2939;
+      --fr-white: #ffffff;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Outfit', system-ui, sans-serif;
+      --shadow: 0 10px 40px rgba(22,20,15,.08);
+      --deep-shadow: 0 28px 80px rgba(22,20,15,.14);
+      --r: 2rem;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      background: var(--cream);
+      color: var(--ink);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .project-nav {
+      background: var(--ink);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      position: relative;
+    }
+    .project-nav::before {
+      content: '';
+      display: block;
+      height: 2px;
+      background: linear-gradient(to right, var(--fr-blue) 33%, rgba(255,255,255,.4) 33% 66%, var(--fr-red) 66%);
+    }
+    .pnav-inner {
+      max-width: 1360px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0 2rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .pnav-inner::-webkit-scrollbar { display: none; }
+    .pnav-brand {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 300;
+      letter-spacing: .1em;
+      color: #fff;
+      padding: .75rem 1.2rem .75rem 0;
+      border-right: 1px solid rgba(255,255,255,.1);
+      margin-right: .5rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .pnav-link {
+      font-size: .7rem;
+      letter-spacing: .06em;
+      color: rgba(255,255,255,.45);
+      padding: .78rem .9rem;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color .2s, border-color .2s;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+    .pnav-link:hover { color: rgba(255,255,255,.85); }
+    .pnav-link.active { color: #fff; border-bottom-color: var(--accent); }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      background: rgba(250,248,245,.84);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(22,20,15,.06);
+    }
+    .header-inner {
+      max-width: 1360px;
+      margin: auto;
+      padding: 1.1rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
+    .brand-eyebrow {
+      font-size: .6rem;
+      letter-spacing: .35em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .brand-name {
+      font-family: var(--serif);
+      font-size: 1.9rem;
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: .08em;
+    }
+    .main-nav {
+      display: flex;
+      gap: 2rem;
+    }
+    .main-nav a {
+      font-size: .8rem;
+      letter-spacing: .05em;
+      position: relative;
+      padding-bottom: 4px;
+    }
+    .main-nav a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      background: linear-gradient(to right, var(--fr-blue) 33%, var(--fr-white) 33% 66%, var(--fr-red) 66%);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .25s ease;
+    }
+    .main-nav a:hover::after,
+    .main-nav a.active::after { transform: scaleX(1); }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: .55rem;
+    }
+    .pill-btn {
+      border: 1px solid rgba(22,20,15,.12);
+      background: transparent;
+      border-radius: 999px;
+      padding: .48rem .95rem;
+      font-size: .74rem;
+      font-family: var(--sans);
+      color: var(--ink);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cart-btn {
+      border: none;
+      background: var(--ink);
+      color: #fff;
+      border-radius: 999px;
+      padding: .52rem 1rem;
+      font-size: .74rem;
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .cart-badge {
+      background: #fff;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: .1rem .45rem;
+      font-size: .66rem;
+      font-weight: 600;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 88vh;
+      background:
+        radial-gradient(circle at 15% 22%, rgba(110, 147, 108, .16), transparent 28%),
+        radial-gradient(circle at 84% 18%, rgba(0,35,149,.08), transparent 26%),
+        linear-gradient(160deg, #f7f3ec 0%, #ede7da 54%, #faf8f5 100%);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(to right, var(--fr-blue) 33%, var(--fr-white) 33% 66%, var(--fr-red) 66%);
+    }
+    .hero-noise {
+      position: absolute;
+      inset: -15%;
+      opacity: .16;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='280' height='280' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+      animation: grainShift 7s linear infinite;
+    }
+    @keyframes grainShift {
+      0% { transform: translate(0,0); }
+      50% { transform: translate(-2%, 1%); }
+      100% { transform: translate(1%, -1%); }
+    }
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(2px);
+      mix-blend-mode: multiply;
+    }
+    .orb.o1 {
+      width: 300px;
+      height: 300px;
+      left: -40px;
+      top: 110px;
+      background: radial-gradient(circle, rgba(110,147,108,.26), transparent 70%);
+      animation: float1 8s ease-in-out infinite;
+    }
+    .orb.o2 {
+      width: 220px;
+      height: 220px;
+      right: 8%;
+      top: 120px;
+      background: radial-gradient(circle, rgba(0,35,149,.14), transparent 70%);
+      animation: float2 10s ease-in-out infinite;
+    }
+    .orb.o3 {
+      width: 430px;
+      height: 430px;
+      right: -120px;
+      bottom: -120px;
+      background: radial-gradient(circle, rgba(22,20,15,.09), transparent 72%);
+      animation: float3 12s ease-in-out infinite;
+    }
+    @keyframes float1 {
+      0%,100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(16px) scale(1.04); }
+    }
+    @keyframes float2 {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-14px); }
+    }
+    @keyframes float3 {
+      0%,100% { transform: translateX(0) translateY(0); }
+      50% { transform: translateX(-18px) translateY(-14px); }
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 1360px;
+      margin: auto;
+      padding: 5rem 2.5rem 4.5rem;
+      display: grid;
+      grid-template-columns: 1.02fr .98fr;
+      gap: 3rem;
+      align-items: center;
+    }
+    .hero-copy .eyebrow {
+      font-size: .65rem;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.2rem;
+    }
+    .hero-copy h1 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(3.2rem, 5.7vw, 6rem);
+      line-height: 0.96;
+      letter-spacing: .01em;
+      max-width: 9ch;
+    }
+    .hero-copy h1 em { font-style: italic; color: #5f8b5b; }
+    .hero-copy p {
+      max-width: 540px;
+      color: var(--muted);
+      font-size: .95rem;
+      line-height: 1.95;
+      margin-top: 1.4rem;
+    }
+    .hero-actions {
+      margin-top: 2rem;
+      display: flex;
+      gap: .8rem;
+      flex-wrap: wrap;
+    }
+    .primary-btn,
+    .secondary-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: .92rem 1.65rem;
+      font-size: .8rem;
+      letter-spacing: .04em;
+    }
+    .primary-btn { background: var(--ink); color: #fff; }
+    .secondary-btn {
+      border: 1px solid rgba(22,20,15,.14);
+      color: var(--ink);
+      background: rgba(255,255,255,.72);
+    }
+
+    .hero-editorial {
+      position: relative;
+      min-height: 600px;
+    }
+    .panel {
+      position: absolute;
+      border-radius: 2rem;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(22,20,15,.05);
+      background: linear-gradient(160deg, #eef1e8 0%, #dde3d5 100%);
+    }
+    .panel::before {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .72rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(22,20,15,.30);
+    }
+    .panel.main {
+      inset: 10px 0 90px 80px;
+      box-shadow: var(--deep-shadow);
+      background: linear-gradient(to top, rgba(22,20,15,.10), rgba(22,20,15,.02)), #e5ebdd;
+    }
+    .panel.main::before { content: 'Material lifecycle'; }
+    .panel.top {
+      width: 220px;
+      height: 250px;
+      left: 0;
+      top: 0;
+      background: #f3f6ee;
+    }
+    .panel.top::before { content: 'Reuse'; }
+    .panel.bottom {
+      width: 260px;
+      height: 180px;
+      left: 26px;
+      bottom: 0;
+      background: #e8eee0;
+    }
+    .panel.bottom::before { content: 'Environment'; }
+    .floating-note {
+      position: absolute;
+      right: -12px;
+      top: 34px;
+      background: rgba(255,255,255,.84);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(22,20,15,.08);
+      border-radius: 999px;
+      padding: .7rem 1rem;
+      font-size: .68rem;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      box-shadow: var(--shadow);
+    }
+
+    .section {
+      padding: 4.8rem 2.5rem;
+    }
+    .section-inner {
+      max-width: 1360px;
+      margin: auto;
+    }
+
+    .intro-band {
+      display: grid;
+      grid-template-columns: 1.12fr .88fr;
+      gap: 1.4rem;
+      align-items: stretch;
+    }
+    .intro-main,
+    .intro-side {
+      background: #fff;
+      border: 1px solid rgba(22,20,15,.05);
+      border-radius: 2rem;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+    .intro-main {
+      padding: 2rem;
+    }
+    .intro-main::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(to right, var(--fr-blue) 33%, var(--fr-white) 33% 66%, var(--fr-red) 66%);
+    }
+    .label {
+      font-size: .62rem;
+      letter-spacing: .34em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: .7rem;
+    }
+    .intro-main h2 {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 3vw, 2.8rem);
+      font-weight: 300;
+      line-height: 1.05;
+      max-width: 13ch;
+    }
+    .intro-main p {
+      margin-top: .9rem;
+      font-size: .86rem;
+      line-height: 1.95;
+      color: var(--muted);
+      max-width: 65ch;
+    }
+    .intro-side {
+      background: linear-gradient(160deg, #f3f6ee 0%, #e8eee0 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    .intro-side blockquote {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 300;
+      line-height: 1.05;
+      max-width: 10ch;
+    }
+    .intro-side em { font-style: italic; color: #5f8b5b; }
+
+    .story-row {
+      display: grid;
+      grid-template-columns: .92fr 1.08fr;
+      gap: 1.4rem;
+      align-items: center;
+      margin-top: 1.4rem;
+    }
+    .story-row.reverse {
+      grid-template-columns: 1.08fr .92fr;
+    }
+    .story-visual,
+    .story-copy {
+      background: #fff;
+      border: 1px solid rgba(22,20,15,.05);
+      border-radius: 2rem;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+    .story-visual {
+      min-height: 430px;
+      background: linear-gradient(160deg, #eef1e8 0%, #dde3d5 100%);
+    }
+    .story-visual::before {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .74rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(22,20,15,.30);
+    }
+    .story-visual.v1::before { content: 'Reuse and second life'; }
+    .story-visual.v2::before { content: 'Materials and impact'; }
+    .story-copy {
+      padding: 2rem;
+    }
+    .story-copy h3 {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 3vw, 2.7rem);
+      font-weight: 300;
+      line-height: 1.05;
+      max-width: 12ch;
+    }
+    .story-copy p {
+      margin-top: .9rem;
+      font-size: .86rem;
+      line-height: 1.95;
+      color: var(--muted);
+    }
+
+    .break-band {
+      margin-top: 1.4rem;
+      background: linear-gradient(180deg, rgba(255,255,255,.72), rgba(241,246,238,.68));
+      border-top: 1px solid rgba(22,20,15,.06);
+      border-bottom: 1px solid rgba(22,20,15,.06);
+      border-radius: 2rem;
+      overflow: hidden;
+      position: relative;
+      box-shadow: var(--shadow);
+    }
+    .break-band::before {
+      content: '';
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      right: -40px;
+      top: -50px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(110,147,108,.22), transparent 70%);
+    }
+    .break-band::after {
+      content: '';
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      left: -40px;
+      bottom: -50px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,35,149,.10), transparent 70%);
+    }
+    .break-inner {
+      position: relative;
+      z-index: 2;
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+    .break-inner p {
+      font-family: var(--serif);
+      font-size: clamp(2.2rem, 4vw, 3.6rem);
+      font-weight: 300;
+      line-height: 1.05;
+      max-width: 12ch;
+      margin: auto;
+    }
+    .break-inner em { font-style: italic; color: #5f8b5b; }
+
+    .next-chapters {
+      margin-top: 1.6rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .chapter-card {
+      background: #fff;
+      border: 1px solid rgba(22,20,15,.05);
+      border-radius: 1.6rem;
+      box-shadow: var(--shadow);
+      padding: 1.25rem;
+    }
+    .chapter-card h4 {
+      font-family: var(--serif);
+      font-size: 1.35rem;
+      font-weight: 300;
+      margin-bottom: .35rem;
+    }
+    .chapter-card p {
+      font-size: .78rem;
+      line-height: 1.8;
+      color: var(--muted);
+      margin-bottom: .8rem;
+    }
+    .chapter-card a {
+      font-size: .78rem;
+      color: var(--ink);
+    }
+
+    .site-footer {
+      background: var(--ink);
+      color: rgba(255,255,255,.7);
+      position: relative;
+      overflow: hidden;
+      margin-top: 4rem;
+    }
+    .site-footer::before {
+      content: '';
+      display: block;
+      height: 3px;
+      background: linear-gradient(to right, var(--fr-blue) 33%, rgba(255,255,255,.5) 33% 66%, var(--fr-red) 66%);
+    }
+    .footer-inner {
+      max-width: 1360px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 3rem;
+      padding: 3.8rem 2.5rem;
+    }
+    .footer-brand-name {
+      font-family: var(--serif);
+      font-size: 2.2rem;
+      font-weight: 300;
+      color: #fff;
+      margin-top: .4rem;
+    }
+    .footer-desc {
+      font-size: .82rem;
+      line-height: 1.85;
+      margin-top: .8rem;
+      max-width: 340px;
+    }
+    .footer-col h4 {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: rgba(255,255,255,.42);
+      margin-bottom: .9rem;
+    }
+    .footer-col a {
+      display: block;
+      margin-bottom: .45rem;
+      font-size: .82rem;
+      color: rgba(255,255,255,.65);
+    }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.07);
+      max-width: 1360px;
+      margin: auto;
+      padding: 1.2rem 2.5rem;
+      text-align: center;
+      font-size: .7rem;
+      color: rgba(255,255,255,.32);
+    }
+
+    @media (max-width: 1080px) {
+      .hero-inner,
+      .intro-band,
+      .story-row,
+      .story-row.reverse,
+      .next-chapters,
+      .footer-inner {
+        grid-template-columns: 1fr 1fr;
+      }
+      .next-chapters { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      .header-inner,
+      .hero-inner,
+      .section,
+      .footer-inner,
+      .pnav-inner {
+        padding-left: 1.2rem;
+        padding-right: 1.2rem;
+      }
+      .header-inner {
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .main-nav { display: none; }
+      .hero-inner,
+      .intro-band,
+      .story-row,
+      .story-row.reverse,
+      .next-chapters,
+      .footer-inner {
+        grid-template-columns: 1fr;
+      }
+      .hero-editorial { min-height: 400px; }
+      .panel.main { inset: 30px 0 50px 20px; }
+      .panel.top,
+      .panel.bottom,
+      .floating-note { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="project-nav"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="homepage.html" class="brand">
+          <div class="brand-eyebrow">Story chapter</div>
+          <div class="brand-name">PAYOTE</div>
+        </a>
+        <nav class="main-nav">
+          <a href="women.html">Women</a>
+          <a href="men.html">Men</a>
+          <a href="collections.html">Collections</a>
+          <a href="our_story.html" class="active">Our Story</a>
+        </nav>
+      </div>
+      <div class="header-right">
+        <button class="pill-btn">EN / FR</button>
+        <button class="pill-btn">USD / EUR</button>
+        <a href="products.html" class="pill-btn">Products</a>
+        <a href="payment_shipping_returns.html" class="cart-btn">Support <span class="cart-badge">3</span></a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-noise"></div>
+    <div class="orb o1"></div>
+    <div class="orb o2"></div>
+    <div class="orb o3"></div>
+
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <div class="eyebrow">Recyclage</div>
+        <h1>Responsibility begins when materials are given a more useful <em>future</em>.</h1>
+        <p>
+          Payote’s environmental commitment page frames the brand around reduced impact, circular thinking, and more responsible design choices. Rather than presenting recycling as decoration, the page positions it as part of a broader environmental engagement. ([payote.fr](https://payote.fr/pages/engagement-environnement))
+        </p>
+        <div class="hero-actions">
+          <a href="#recyclage-section" class="primary-btn">Read the chapter →</a>
+          <a href="our_story.html" class="secondary-btn">Back to Our Story</a>
+        </div>
+      </div>
+
+      <div class="hero-editorial">
+        <div class="panel main"></div>
+        <div class="panel top"></div>
+        <div class="panel.bottom"></div>
+        <div class="floating-note">Second life thinking</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="recyclage-section">
+    <div class="section-inner">
+      <div class="intro-band">
+        <article class="intro-main">
+          <div class="label">The angle</div>
+          <h2>Not only a product story, but a material story.</h2>
+          <p>
+            On its environmental page, Payote presents its commitments as part of a broader effort to reduce waste and improve the way products are designed and circulated. The page sits within the brand-story section, which suggests that recycling is treated as part of identity, not merely as a side note. ([payote.fr](https://payote.fr/pages/engagement-environnement))
+          </p>
+          <p>
+            In this redesign, that becomes clearer: the chapter is not there to say “we care,” but to show that the brand wants the life of materials to matter before, during, and after the sale. This is an interpretation of the page’s positioning and title. ([payote.fr](https://payote.fr/pages/engagement-environnement))
+          </p>
+        </article>
+
+        <aside class="intro-side">
+          <blockquote>
+            Reuse is not a detail. It is part of the product’s <em>meaning</em>.
+          </blockquote>
+        </aside>
+      </div>
+
+      <div class="story-row">
+        <div class="story-visual v1"></div>
+        <article class="story-copy">
+          <div class="label">Circular intention</div>
+          <h3>Giving products and materials a second reading.</h3>
+          <p>
+            The original page situates environmental action in a logic of engagement rather than one isolated gesture. That matters, because it lets recycling stand for more than disposal: it suggests attention to materials, waste, and the afterlife of products. ([payote.fr](https://payote.fr/pages/engagement-environnement))
+          </p>
+          <p>
+            For the redesign, the point becomes easier to grasp visually: a responsible brand is not only one that makes, but one that thinks about what remains, what returns, and what can be transformed instead of abandoned.
+          </p>
+        </article>
+      </div>
+
+      <div class="break-band">
+        <div class="break-inner">
+          <p>
+            The product does not end at the sale. Its story continues in what is kept, reused, or <em>rethought</em>.
+          </p>
+        </div>
+      </div>
+
+      <div class="story-row reverse">
+        <article class="story-copy">
+          <div class="label">Environmental coherence</div>
+          <h3>Responsibility becomes stronger when it is linked to the rest of the brand.</h3>
+          <p>
+            Because Payote places this page inside the same narrative family as “Nos premiers pas”, “Made in France”, and “Nos actions”, the environmental commitment is not isolated from origin or production. That structure itself tells something important: recycling is part of a wider coherence. ([payote.fr](https://payote.fr/pages/engagement-environnement))
+          </p>
+          <p>
+            In the redesign, this is exactly what the page tries to preserve: a sense that material responsibility belongs to the same story as local craft, transparency, and action.
+          </p>
+        </article>
+        <div class="story-visual v2"></div>
+      </div>
+
+      <div class="next-chapters">
+        <article class="chapter-card">
+          <div class="label">Previous chapter</div>
+          <h4>Made in France</h4>
+          <p>Go back to workshop, local fabrication, and the social meaning behind French production.</p>
+          <a href="made_in_france.html">Open chapter →</a>
+        </article>
+        <article class="chapter-card">
+          <div class="label">Next chapter</div>
+          <h4>Nos actions</h4>
+          <p>Continue toward the most concrete layer of the story: what the brand says it actually does.</p>
+          <a href="nos_actions.html">Open chapter →</a>
+        </article>
+        <article class="chapter-card">
+          <div class="label">Back to story</div>
+          <h4>Our Story</h4>
+          <p>Return to the story hub and move between the different brand chapters more freely.</p>
+          <a href="our_story.html">Open chapter →</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <div class="brand-eyebrow" style="color:rgba(255,255,255,.35)">Payote redesigned</div>
+        <div class="footer-brand-name">A recyclage page with more clarity,<br/>more narrative logic, and less green vagueness.</div>
+        <p class="footer-desc">This version keeps the environmental commitment chapter inside the same coherent brand story while making circular thinking easier to understand and easier to remember. ([payote.fr](https://payote.fr/pages/engagement-environnement))</p>
+      </div>
+      <div class="footer-col">
+        <h4>Story</h4>
+        <a href="our_story.html">Our Story</a>
+        <a href="nos_premiers_pas.html">Nos premiers pas</a>
+        <a href="made_in_france.html">Made in France</a>
+        <a href="recyclage.html">Recyclage</a>
+        <a href="nos_actions.html">Nos actions</a>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <a href="women.html">Women</a>
+        <a href="men.html">Men</a>
+        <a href="collections.html">Collections</a>
+        <a href="products.html">Products</a>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 Payote · Recyclage page redesign concept</div>
+  </footer>
+
+  <script src="layout.js"></script>
+</body>
+</html>
